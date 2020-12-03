@@ -76,12 +76,24 @@ WSGI_APPLICATION = 'ansible_conf.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if IS_PROD:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': env('DATABASES_NAME'),
+            'USER': env('DATABASES_USER'),
+            'PASSWORD': env('DATABASES_PASSWORD'),
+            'HOST': env('DATABASES_HOST'),
+            'PORT': env('DATABASES_PORT', default='5342'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
