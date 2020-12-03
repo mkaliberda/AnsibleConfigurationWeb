@@ -1,0 +1,81 @@
+.color__heading {
+  color: rgba(28, 92, 146, 0.9);
+}
+
+.uk-navbar-container {
+  background: linear-gradient(90deg, #eefbfc 5%, rgba(28, 92, 146, 0.35) 95%);
+}
+
+.uk-logo img {
+  max-width: 150px;
+}
+
+.nav-logo-text {
+  font-size: 2rem;
+}
+
+.internal-wrapper {
+  position: relative;
+}
+
+.internal-wrapper aside {
+  display: block;
+  width: 300px;
+  position: absolute;
+}
+
+.internal-wrapper aside .uk-parent {
+  margin-left: 1rem;
+  padding: 0.5rem;
+}
+
+.internal-wrapper aside .uk-nav-sub .uk-active {
+  font-weight: 700;
+}
+
+.internal-wrapper aside .uk-nav-sub .uk-active a {
+  color: #666;
+}
+
+.internal-wrapper aside .img__link {
+  display: flex;
+  align-items: center;
+  font-size: 1.25rem;
+}
+
+.internal-wrapper aside .img__link img {
+  max-width: 80px;
+  margin-right: 0.5rem;
+}
+
+.internal-wrapper aside a {
+  font-size: 1.25rem;
+}
+
+.internal-wrapper aside a:hover {
+  font-weight: 700;
+  color: #666;
+}
+
+.internal-wrapper main {
+  padding: 0 1rem;
+  margin-left: 300px;
+}
+
+.playbook-form__card {
+  min-height: 80vh;
+  padding: 2rem;
+}
+
+.playbook-form__card input {
+  cursor: pointer;
+}
+
+.playbook-form__card .upload__form__container {
+  min-height: 40vh;
+}
+
+.review-vars__table.uk-table-small td, .review-vars__table.uk-table-small th {
+  padding: 0.5rem;
+  font-size: 0.9rem;
+}

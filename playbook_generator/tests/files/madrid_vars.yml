@@ -1,0 +1,85 @@
+---
+# All variables needed for the Madrid environment
+
+cvm_netmask: "255.255.255.224"
+cvm_gateway: "10.215.33.97"
+current_cvm_vlan_tag: "102"
+hypervisor_iso: {} # the excel doesn't have this field is this default variable or we can get from web form ?
+hypervisor_netmask: "255.255.255.224"
+hypervisor_gateway: "10.215.33.97"
+hypervisor_nameserver: "10.195.121.44"
+hypervisor_password: "nutanix"
+skip_hypervisor: false # the excel doesn't have this field is this default variable or we can get from web form ?
+ipmi_gateway: "10.215.33.33"
+ipmi_netmask: "255.255.255.224"
+nos_package: "/home/nutanix/foundation/nos/nutanix_installer_package-release-euphrates-5.15.3-stable-x86_64.tar.gz" # the excel has only version
+is_imaging: true # the excel doesn't have this field is this default variable or we can get from web form ?
+enable_ns: "false"
+redundancy_factor: "2"
+timezone: "Europe/Madrid" # the excel has only Location I can get timezone by custom method
+cluster_name: "es-rom-ahv-crp-c01"
+cluster_external_ip: "10.215.33.110"
+cluster_init_successful: true # the excel doesn't have this field is this default variable or we can get from web form ?
+
+ntp_server_1 : "10.195.121.44"
+ntp_server_2 : "10.198.121.44"
+ntp_server_3 : "10.150.121.44"
+
+dns_server_1 : "10.195.121.44"
+dns_server_2 : "10.198.121.44"
+dns_server_3 : "10.150.121.44"
+
+cluster_member_1: "10.215.33.113"
+cluster_member_2: "10.215.33.114"
+
+node1_ipmi_user: "ADMIN"
+node1_image_now: true # the excel doesn't have this field is this default variable or we can get from web form ?
+node1_hypervisor: "kvm" # the excel doesn't have this field is this default variable or we can get from web form ?
+node1_hypervisor_hostname: "es-rom-ahv-crp-c01-n01"
+node1_ipmi_ip: "10.215.33.53"
+node1_node_position: "A"
+node1_ipmi_password: "OM203S046700"
+node1_ipmi_configure_now: false # the excel doesn't have this field is this default variable or we can get from web form ?
+node1_cvm_ip: "10.215.33.113"
+node1_is_bare_metal: true # the excel doesn't have this field is this default variable or we can get from web form ?
+node1_hypervisor_ip: "10.215.33.111"
+node1_block_id: "20FM5E350056"
+
+node2_ipmi_user: "ADMIN"
+node2_image_now: true # the excel doesn't have this field is this default variable or we can get from web form ?
+node2_hypervisor: "kvm" # the excel doesn't have this field is this default variable or we can get from web form ?
+node2_hypervisor_hostname: "es-rom-ahv-crp-c01-n02"
+node2_ipmi_ip: "10.215.33.54"
+node2_node_position: "A"
+node2_ipmi_password: "OM203S046701"
+node2_ipmi_configure_now: false # the excel doesn't have this field is this default variable or we can get from web form ?
+node2_cvm_ip: "10.215.33.114"
+node2_is_bare_metal: true # the excel doesn't have this field is this default variable or we can get from web form ?
+node2_hypervisor_ip: "10.215.33.112"
+node2_block_id: "20FM5E350058"
+
+witness_address: "10.195.54.79"
+
+vlan_mgmt_and_cvm_name: "ROM-NTX-MGMT"
+vlan_mgmt_and_cvm_id: "102"
+vlan_mgmt_and_cvm_gateway: "10.215.33.97"
+vlan_mgmt_and_cvm_tagging: "No"
+vlan_ipmi_id: "105"
+vlan_ipmi_gateway: "10.215.33.33"
+vlan_ipmi_tagging: "No"
+
+pulse_enabled: "Yes"
+pulse_email_contact: "gti-syseng-virtualization.groups@ironmountain.com"
+
+storage_pool_name: "ES-ROM-CRP-C01-NTX-SP"
+storage_compression_enabled: "Yes" 
+storage_compression_delay: "60"
+storage_deduplication: "NA"
+storage_container_name: "ES-ROM-CRP-C01-RF2-CTNR-01"
+
+smtp_address: "smtpserver.domain.com"
+smtp_port: "25"
+smtp_address_to: "e-mail@domain.com"
+smtp_address_from: "e-mail@domain.com"
+
+prism_central_ip: "10.195.54.80"

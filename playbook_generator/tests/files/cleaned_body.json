@@ -1,0 +1,94 @@
+{
+  "cvm_netmask": "255.255.255.224",
+  "cvm_gateway": "10.15.3.97",
+  "current_cvm_vlan_tag": "102",
+  "hypervisor_iso": {},
+  "hypervisor_netmask": "255.255.255.224",
+  "hypervisor_gateway": "10.15.3.97",
+  "hypervisor_nameserver": "10.95.21.44",
+  "hypervisor_password": "nutanix",
+  "skip_hypervisor": false,
+  "ipmi_gateway": "10.15.3.33",
+  "ipmi_netmask": "255.255.255.224",
+  "nos_package": "/home/nutanix/foundation/nos/nutanix_installer_package-release-euphrates-5.15.3-stable-x86_64.tar.gz",
+  "is_imaging": true,
+  "clusters": [
+    {
+      "enable_ns": false,
+      "redundancy_factor": 2,
+      "timezone": "Europe/Madrid",
+      "cluster_name": "ahv-crp-c01",
+      "cluster_external_ip": "10.15.3.110",
+      "cluster_init_successful": true,
+      "cvm_ntp_servers": "10.19.12.44, 10.18.121.44, 10.10.12.44",
+      "cvm_dns_servers": "10.19.12.44, 10.18.121.44, 10.10.12.44",
+      "cluster_members": [
+        "10.15.33.3",
+        "10.15.33.4"
+      ],
+      "cluster_init_now": true,
+      "hypervisor_ntp_servers": "10.195.121.44"
+    }
+  ],
+  "tests": {
+    "run_syscheck": true,
+    "run_ncc": true
+  },
+  "blocks": [
+    {
+      "nodes": [
+        {
+          "ipmi_user": "ADMIN",
+          "image_now": true,
+          "hypervisor": "kvm",
+          "hypervisor_hostname": "ahv-crp-c01-n01",
+          "ipmi_ip": "10.15.33.53",
+          "node_position": "A",
+          "ipmi_password": "IPMIPass1",
+          "ipmi_configure_now": false,
+          "cvm_ip": "10.15.33.3",
+          "is_bare_metal": true,
+          "hypervisor_ip": "10.15.33.1"
+        }
+      ],
+      "block_id": "ABDC1232"
+    },
+    {
+      "nodes": [
+        {
+          "ipmi_user": "ADMIN",
+          "image_now": true,
+          "hypervisor": "kvm",
+          "hypervisor_hostname": "ahv-crp-c01-n02",
+          "ipmi_ip": "10.15.33.54",
+          "node_position": "A",
+          "ipmi_password": "IPMIPass2",
+          "ipmi_configure_now": false,
+          "cvm_ip": "10.15.33.4",
+          "is_bare_metal": true,
+          "hypervisor_ip": "10.15.33.2"
+        }
+      ],
+      "block_id": "ABDC1232"
+    }
+  ],
+  "witness_address": "10.15.54.79",
+  "vlan_mgmt_and_cvm_name": "ROM-NTX-MGMT",
+  "vlan_mgmt_and_cvm_id": "102",
+  "vlan_mgmt_and_cvm_gateway": "10.15.3.97",
+  "vlan_mgmt_and_cvm_tagging": "No",
+  "vlan_ipmi_name": "ROM-IPMI",
+  "vlan_ipmi_id": "105",
+  "vlan_ipmi_gateway": "10.15.3.33",
+  "vlan_ipmi_tagging": "No",
+  "pulse_enabled": "Yes",
+  "storage_pool_name": "CRP-C01-NTX",
+  "storage_compression": "Yes, 60 minute delay",
+  "storage_deduplication": "NA",
+  "storage_container_name": "CRP-C01-RF2-CTNR-01",
+  "smtp_address": "smtpserver.domain.com",
+  "smtp_port": "25",
+  "smtp_address_to": "e-mail@domain.com",
+  "smtp_address_from": "e-mail@domain.com",
+  "prism_central_ip": "10.15.54.80"
+}
