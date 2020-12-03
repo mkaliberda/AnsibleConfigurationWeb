@@ -1,0 +1,37 @@
+@import "colors";
+
+$error-color: #ef728d;
+
+.content__wrapper {
+    min-height: 100vh;
+    background: linear-gradient(90deg, rgb(238, 251, 252) 5%, rgba(28, 92, 146, 0.35) 95%);
+    //background: rgba(28, 92, 146, 0.2);
+}
+
+.color__heading {
+    color: rgba(28, 92, 146, 0.9) !important;
+}
+
+.color__error {
+    color: $error-color;
+}
+
+.brand_form__logo img {
+    max-width: 300px;
+}
+
+.brand_form__logo h1 {
+    font-size: 2rem;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.brand_form__logo .uk-heading-line>::after, .brand_form__logo .uk-heading-line>::before {
+    border-bottom: calc(.2px + 0.15em) solid rgba(28, 92, 146, 0.4);
+}
+
+.uk-logo img{
+    max-width: 150px;
+}
+
+

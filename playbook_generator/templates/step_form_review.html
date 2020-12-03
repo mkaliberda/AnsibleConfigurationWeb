@@ -1,0 +1,60 @@
+{% extends 'playbook_form_stepper.html' %}
+{% block base_form_stepper_html %}
+{#  {{  uploaded_config.parsed_data }}#}
+
+{#    <p>{{ key }}: {{ value }}</p>#}
+    <div class="uk-container">
+      <table class="review-vars__table uk-table uk-table-divider uk-table-small uk-table-justify">
+      <caption>Please, take a look at parse vars</caption>
+      <thead>
+        <tr>
+          <th class="color__heading">Var key</th>
+          <th class="color__heading">Var value</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key, value in uploaded_config.parsed_data.items %}
+          {% if key == 'nodes' %}
+            {% for node_key, node_value in value.items  %}
+              {% if node_key != 'group' %}
+                <thead>
+                  <tr>
+                    <th class="color__heading">Node {{ forloop.counter0 }}</th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                  <tr></tr>
+                </thead>
+                {% for obj_key, obj_value in node_value.items %}
+                  <tr>
+                    <td></td>
+                    <td>{{ obj_key }}</td>
+                    <td>{{ obj_value }}</td>
+                  </tr>
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td>{{ key }}</td>
+              <td>{{ value.value }}</td>
+              <td></td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+      <thead>
+        <tr>
+          <th>Var key</th>
+          <th>Var value</th>
+        </tr>
+      </thead>
+    </table>
+    </div>
+{#    {% if value.is_to_playbook %}#}
+{#      <p>{{ key }} {{ value.name }}: {{ value.value }}</p>#}
+{#    {% endif %}#}
+{% endblock %}
+{% block base_js %}
+{% endblock %}

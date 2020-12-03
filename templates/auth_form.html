@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block base_html %}
+  <div class="brand_form__logo uk-flex uk-flex-center uk-flex-column uk-padding-large uk-flex-middle">
+    <img src="{% static 'img/logo.png' %}">
+    <h1 class="uk-heading-line uk-text-center color__heading">
+      <span>Infrastructure as Code</span>
+    </h1>
+  </div>
+
+  {% block base_brand_form_html %}
+  {% endblock %}
+{% endblock %}

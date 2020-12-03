@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block base_html %}
+  <nav class="uk-navbar-container uk-margin-medium-bottom uk-navbar-transparent" uk-navbar>
+    <div class="uk-navbar-left">
+        <a class="uk-navbar-item uk-logo" href="#">
+          <img src="{% static 'img/logo.png' %}">
+        </a>
+<!--        <div class="uk-container">-->
+<!--            <span>Infrastructure as Code</span>-->
+<!--        </div>-->
+    </div>
+    <div class="uk-flex uk-flex-left@s uk-flex-middle uk-margin-medium-left">
+      <span class="uk-heading-line uk-text-center color__heading uk-text-large">
+        <span>Automated provisioning portal</span>
+      </span>
+    </div>
+  </nav>
+  <div class="internal-wrapper">
+    <aside>
+      <ul class="uk-nav-default uk-nav-parent-icon left-navbar" uk-nav>
+        <li class="uk-parent {% if 'nutanix' in request.path  %} uk-open {% endif %}">
+          <a href="#" class="img__link">
+            <img src="{% static 'img/service_logo_nutanix.png' %}"> NUTANIX
+          </a>
+          <ul class="uk-nav-sub">
+            <li>
+              <a href="{% url 'playbook_generator:playbook_step_upload' service_type='nutanix' %}"
+                 class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
+              >
+                Run new payload
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="uk-parent {% if 'vmware' in request.path  %} uk-open {% endif %}">
+          <a href="#" class="img__link">
+            <img src="{% static 'img/service_logo_vmware.png' %}"> VMWARE
+          </a>
+          <ul class="uk-nav-sub">
+            <li>
+              <a href="{% url 'playbook_generator:playbook_step_upload' service_type='vmware' %}"
+                 class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
+              >
+                Run new payload
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </aside>
+    <main>
+    {% block base_internal_html %}
+    {% endblock %}
+    </main>
+  </div>
+{% endblock %}

@@ -1,0 +1,83 @@
+@import "colors";
+
+.color__heading {
+  color: rgba(28, 92, 146, 0.9);
+}
+
+.uk-navbar-container {
+  background: linear-gradient(90deg, rgb(238, 251, 252) 5%, rgba(28, 92, 146, 0.35) 95%);
+  //background: rgba(28, 92, 146, 0.35);
+}
+
+.uk-logo img {
+  max-width: 150px;
+}
+
+.nav-logo-text {
+  font-size: 2rem;
+}
+
+.internal-wrapper {
+  position: relative;
+  aside {
+    display: block;
+    width: 300px;
+    position: absolute;
+    .uk-parent {
+      margin-left: 1rem;
+      padding: 0.5rem;
+    }
+    .uk-nav-sub {
+      .uk-active {
+        font-weight: 700;
+        a {
+          color: $hover__link;
+        }
+      }
+    }
+    .img__link {
+      display: flex;
+      align-items: center;
+      font-size: 1.25rem;
+      img {
+        max-width: 80px;
+        margin-right: 0.5rem;
+      }
+    }
+    a {
+      font-size: 1.25rem;
+      &:hover {
+        font-weight: 700;
+        color: $hover__link;
+      }
+    }
+  }
+  main {
+    padding: 0 1rem;
+    margin-left: 300px;
+  }
+}
+
+.playbook-form__card {
+  min-height: 80vh;
+  padding: 2rem;
+  input {
+    cursor: pointer;
+  }
+  .upload__form__container {
+    min-height: 40vh;
+  }
+}
+
+.review-vars__table {
+  &.uk-table-small td, &.uk-table-small th {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+
+
+
+
+
