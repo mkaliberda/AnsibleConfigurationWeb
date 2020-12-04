@@ -536,7 +536,7 @@ class NutanixParser():
                         continue
                     for k, node_val in node_obj.items():
                         yml_dict.update({
-                            f"node{inx + 1}_{k}": format_val(node_val),
+                            f"node{inx}_{k}": format_val(node_val),
                         })
 
         return yml_dict
