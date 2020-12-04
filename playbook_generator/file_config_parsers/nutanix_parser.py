@@ -438,15 +438,18 @@ class NutanixParser():
         while row_num < self.sheet.nrows and self.current_row(row_num):
             if not len(self.current_row(row_num)) or not self.current_row(row_num)[0]:
                 return row_num
+
             node_dict = {}
-            node_dict.update(DEFAULT_VALUES)
             for inx, value in enumerate(self.current_row(row_num)):
                 if headers[inx]:
                     node_dict.update({ headers[inx]: value })
-            if node_dict.get(NODE_KEY) not in self.parsed_data[self.NODES]:
-                self.parsed_data[self.NODES][node_dict.get(NODE_KEY)] = node_dict
-            else:
-                self.parsed_data[self.NODES][node_dict.get(NODE_KEY)].update(node_dict)
+            if node_dict:
+                node_dict.update(DEFAULT_VALUES)
+                if node_dict.get(NODE_KEY) not in self.parsed_data[self.NODES]:
+
+                    self.parsed_data[self.NODES][node_dict.get(NODE_KEY)] = node_dict
+                else:
+                    self.parsed_data[self.NODES][node_dict.get(NODE_KEY)].update(node_dict)
             row_num += 1
         return row_num
 
