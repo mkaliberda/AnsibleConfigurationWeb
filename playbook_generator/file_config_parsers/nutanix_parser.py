@@ -263,7 +263,7 @@ class NutanixParser():
             'group': VLAN,
             'is_to_playbook': True,
             'value': '',
-            'format_method': 'format_vlan_id',
+            'format_methods': ['format_vlan_id'],
         },
         'vlan_mgmt_and_cvm_gateway': {
             'group': VLAN,
@@ -279,7 +279,7 @@ class NutanixParser():
             'group': VLAN,
             'is_to_playbook': True,
             'value': '',
-            'format_method': 'format_vlan_id',
+            'format_methods': ['format_vlan_id'],
         },
         'vlan_ipmi_gateway': {
             'group': VLAN,
@@ -310,6 +310,7 @@ class NutanixParser():
             'group': STORAGE,
             'is_to_playbook': True,
             'value': '',
+            'format_methods': ['format_integer'],
         },
         'storage_deduplication': {
             'group': STORAGE,
@@ -335,6 +336,7 @@ class NutanixParser():
             'group': SMTP,
             'is_to_playbook': True,
             'value': '',
+            'format_methods': ['format_integer'],
         },
         'smtp_username': {
             'group': SMTP,
@@ -401,10 +403,16 @@ class NutanixParser():
                 if item_key is None:
                     return row_num
                 if self.current_row(row_num)[n] and item_key and self.parsed_data.get(item_key):
+
                     if type(self.parsed_data.get(item_key)['value']) == list:
-                        self.parsed_data.get(item_key)['value'].append(self.current_row(row_num)[n])
+                        if self.current_row(row_num)[n] not in self.parsed_data.get(item_key)['value']:
+                            self.parsed_data.get(item_key)['value'].append(
+                                self.set_formating_data(item_key, self.current_row(row_num)[n])
+                            )
                     else:
-                        self.parsed_data.get(item_key)['value'] = self.current_row(row_num)[n]
+                        self.parsed_data.get(item_key)['value'] = self.set_formating_data(
+                            item_key, self.current_row(row_num)[n]
+                        )
             row_num += 1
         return row_num
 
@@ -430,7 +438,8 @@ class NutanixParser():
         while row_num < self.sheet.nrows and self.current_row(row_num):
             if not len(self.current_row(row_num)) or not self.current_row(row_num)[0]:
                 return row_num
-            node_dict = DEFAULT_VALUES
+            node_dict = {}
+            node_dict.update(DEFAULT_VALUES)
             for inx, value in enumerate(self.current_row(row_num)):
                 if headers[inx]:
                     node_dict.update({ headers[inx]: value })
@@ -455,7 +464,7 @@ class NutanixParser():
 
             for inx in range(1, len(self.current_row(row_num))):
                 if headers[inx] and self.parsed_data.get(f"{prefix}_{headers[inx]}"):
-                    value = self.current_row(row_num)[inx]
+                    value = self.set_formating_data(f"{prefix}_{headers[inx]}", self.current_row(row_num)[inx])
                     self.parsed_data[f"{prefix}_{headers[inx]}"]['value'] = value
             row_num += 1
         return row_num
@@ -481,6 +490,15 @@ class NutanixParser():
             row_num = self.parse_item_config(row_num, grouped_heading, 5)
         return row_num
 
+    def set_formating_data(self, item_key, value):
+        data = self.parsed_data.get(item_key)
+        if data and data.get('format_methods'):
+            for method_key in data.get('format_methods'):
+                format_method = self.__getattribute__(method_key)
+                if format_method:
+                    value = format_method(value)
+        return value
+
     def parse_file(self):
         row_num = 0
         while row_num < self.sheet.nrows:
@@ -491,9 +509,44 @@ class NutanixParser():
         # method = self.__getattribute__('format_vlan_id')
         # print(method('CJ (VLAN 102)'))
 
+    def get_yml_dict(self):
+        yml_dict = {}
+
+        def format_val(val):
+            if type(val) == bool:
+                return val
+            else:
+                return str(val)
+
+        for key, data in self.parsed_data.items():
+            value = data.get('value')
+            if value and data.get('is_to_playbook'):
+                if type(value) == list:
+                    for inx, item in enumerate(value):
+                        yml_dict.update({
+                            f"{key}_{inx + 1}": format_val(item),
+                        })
+                else:
+                    yml_dict.update({
+                        key: format_val(value),
+                    })
+            if key == 'nodes':
+                for inx, (node_key, node_obj) in enumerate(data.items()):
+                    if node_key == 'group':
+                        continue
+                    for k, node_val in node_obj.items():
+                        yml_dict.update({
+                            f"node{inx + 1}_{k}": format_val(node_val),
+                        })
+
+        return yml_dict
 
     @staticmethod
     def format_vlan_id(value):
         return value.split(' ')[-1].replace(')', '')
+
+    @staticmethod
+    def format_integer(value):
+        return str(int(value))
 
 

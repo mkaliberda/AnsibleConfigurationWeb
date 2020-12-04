@@ -131,6 +131,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
+PATH_UPLOAD_CONFIGS = env('PATH_UPLOAD_CONFIGS', default='./')
 
 STATIC_URL = '/static/'
 
@@ -138,8 +139,7 @@ STATIC_ROOT = BASE_DIR.joinpath('../static_root').absolute()
 
 STATICFILES_DIRS = (BASE_DIR.joinpath('static'),)
 
-MEDIA_URL = '/media/'
+MEDIA_URL = '/uploads/'
 
-MEDIA_ROOT = BASE_DIR.joinpath('../media_root').absolute()
+MEDIA_ROOT = PATH_UPLOAD_CONFIGS
 
-print(MEDIA_ROOT)

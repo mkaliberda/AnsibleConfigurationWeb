@@ -51,7 +51,9 @@ class NutanixParserTestCases(TestCase):
 
 
     def test_parser(self):
-        fin_path = settings.BASE_DIR.joinpath('playbook_generator/tests/files/nutanix.xlsx')
+        fin_path = settings.BASE_DIR.joinpath('playbook_generator/tests/files/nutanix1.xlsx')
         parser = NutanixParser(file_path=fin_path)
         parser.parse_file()
+        # parser.get_parsed_data()
+        parser.get_yml_dict()
         # self.assertDictEqual(self.parsed_data, parser.parsed_data)

@@ -1,3 +1,9 @@
+import yaml
+
+from django.conf import settings
+from django.utils import timezone
+from django.core.files import File
+from django.core.files.base import ContentFile
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse, reverse_lazy
@@ -35,7 +41,19 @@ class PlaybookUploadStepViewForm(generic.FormView):
         if form.is_valid():
             parser_class = ParserFactory(event_type=service_type).parser_class(file_contents=file.read())
             parser_class.parse_file()
+
+            # define a custom representer for strings
+            def quoted_presenter(dumper, data):
+                return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='"')
+
+            yaml.add_representer(str, quoted_presenter)
+
             self.config_upload = ConfigUpload.objects.create(parsed_data=parser_class.parsed_data)
+            self.config_upload.config_yml_file.save(f"upload_{int(timezone.now().timestamp())}.yaml",
+                                                    ContentFile(yaml.dump(parser_class.get_yml_dict(),
+                                                                          default_flow_style=False,
+                                                                          encoding='utf-8')))
+            self.config_upload.save()
             return redirect(to=self.get_success_url())
         else:
             return self.form_invalid(form)
