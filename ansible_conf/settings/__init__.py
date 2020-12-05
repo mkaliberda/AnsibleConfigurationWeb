@@ -14,6 +14,8 @@ from pathlib import Path
 
 env = environ.Env()
 
+environ.Env.read_env('.env')
+
 DEBUG=env.bool('DEBUG', default=False)
 IS_PROD=env.bool('IS_PROD', default=False)
 SECRET_KEY=env.str('SECRET_KEY', default='DEV1234')

@@ -94,7 +94,7 @@ class NutanixParser():
             'SMTP Security Mode': 'smtp_security_mode',
             'SMTP Username': 'smtp_username',
             'Password': 'smtp_password',
-            'Email Address TO': 'smtp_address_to',
+            'Email Address TO': ['smtp_address_to', 'pulse_email_contact'],
             'Email Address FROM': 'smtp_address_from',
             'PRISM Central Instance IP': 'prism_central_ip',
         }
@@ -297,6 +297,11 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': '',
         },
+        'pulse_email_contact': {
+            'group': STORAGE,
+            'is_to_playbook': True,
+            'value': '',
+        },
         'storage_pool_name': {
             'group': STORAGE,
             'is_to_playbook': True,
@@ -397,23 +402,29 @@ class NutanixParser():
 
             item_cell = re.split(', | & ', item_cell) # some items parsed by , or &
 
-            item_key = None
+            item_keys = []
             for new_item_key, n in itertools.zip_longest(item_cell, range(2, value_range)):
                 if new_item_key is not None:
-                    item_key = self.GROUPED_KEYS[to_group].get(new_item_key)
-                if item_key is None:
-                    return row_num
-                if self.current_row(row_num)[n] and item_key and self.parsed_data.get(item_key):
-
-                    if type(self.parsed_data.get(item_key)['value']) == list:
-                        if self.current_row(row_num)[n] not in self.parsed_data.get(item_key)['value']:
-                            self.parsed_data.get(item_key)['value'].append(
-                                self.set_formating_data(self.parsed_data.get(item_key), self.current_row(row_num)[n])
-                            )
+                    if type(self.GROUPED_KEYS[to_group].get(new_item_key)) == list:
+                        item_keys = self.GROUPED_KEYS[to_group].get(new_item_key, [])
                     else:
-                        self.parsed_data.get(item_key)['value'] = self.set_formating_data(
-                            self.parsed_data.get(item_key), self.current_row(row_num)[n]
-                        )
+                        if self.GROUPED_KEYS[to_group].get(new_item_key):
+                            item_keys = [self.GROUPED_KEYS[to_group].get(new_item_key)]
+                if not item_keys:
+                    return row_num
+                for item_key in item_keys:
+                    if self.current_row(row_num)[n] and item_key and self.parsed_data.get(item_key):
+                        if type(self.parsed_data.get(item_key)['value']) == list:
+
+                            if self.current_row(row_num)[n] not in self.parsed_data.get(item_key)['value']:
+                                # array should contains uniqe values
+                                self.parsed_data.get(item_key)['value'].append(
+                                    self.set_formating_data(self.parsed_data.get(item_key), self.current_row(row_num)[n])
+                                )
+                        else:
+                            self.parsed_data.get(item_key)['value'] = self.set_formating_data(
+                                self.parsed_data.get(item_key), self.current_row(row_num)[n]
+                            )
             row_num += 1
         return row_num
 
