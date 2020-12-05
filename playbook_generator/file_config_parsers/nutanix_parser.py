@@ -146,6 +146,7 @@ class NutanixParser():
             'group': CLUSTER_CONFIGURATION,
             'is_to_playbook': True,
             'value': '',
+            'format_methods': ['format_redundancy_factor'],
         },
         'aos': {
             'name': 'Acropolis Operating System (AOS) version',
@@ -407,11 +408,11 @@ class NutanixParser():
                     if type(self.parsed_data.get(item_key)['value']) == list:
                         if self.current_row(row_num)[n] not in self.parsed_data.get(item_key)['value']:
                             self.parsed_data.get(item_key)['value'].append(
-                                self.set_formating_data(item_key, self.current_row(row_num)[n])
+                                self.set_formating_data(self.parsed_data.get(item_key), self.current_row(row_num)[n])
                             )
                     else:
                         self.parsed_data.get(item_key)['value'] = self.set_formating_data(
-                            item_key, self.current_row(row_num)[n]
+                            self.parsed_data.get(item_key), self.current_row(row_num)[n]
                         )
             row_num += 1
         return row_num
@@ -432,6 +433,14 @@ class NutanixParser():
             'ipmi_configure_now': False,
             'is_bare_metal': True,
         }
+
+        NODE_VALUES = {
+            'hypervisor_hostname': {
+                'format_methods': ['format_host_name',],
+            },
+        }
+
+
         NODE_KEY = 'ipmi_ip'
         headers = self.get_headers(row_num, to_group)
         row_num += 1
@@ -442,11 +451,12 @@ class NutanixParser():
             node_dict = {}
             for inx, value in enumerate(self.current_row(row_num)):
                 if headers[inx]:
-                    node_dict.update({ headers[inx]: value })
+                    node_dict.update({
+                        headers[inx]: self.set_formating_data(NODE_VALUES.get(headers[inx]), value)
+                    })
             if node_dict:
                 node_dict.update(DEFAULT_VALUES)
                 if node_dict.get(NODE_KEY) not in self.parsed_data[self.NODES]:
-
                     self.parsed_data[self.NODES][node_dict.get(NODE_KEY)] = node_dict
                 else:
                     self.parsed_data[self.NODES][node_dict.get(NODE_KEY)].update(node_dict)
@@ -467,7 +477,8 @@ class NutanixParser():
 
             for inx in range(1, len(self.current_row(row_num))):
                 if headers[inx] and self.parsed_data.get(f"{prefix}_{headers[inx]}"):
-                    value = self.set_formating_data(f"{prefix}_{headers[inx]}", self.current_row(row_num)[inx])
+                    value = self.set_formating_data(self.parsed_data.get(f"{prefix}_{headers[inx]}"),
+                                                    self.current_row(row_num)[inx])
                     self.parsed_data[f"{prefix}_{headers[inx]}"]['value'] = value
             row_num += 1
         return row_num
@@ -493,10 +504,9 @@ class NutanixParser():
             row_num = self.parse_item_config(row_num, grouped_heading, 5)
         return row_num
 
-    def set_formating_data(self, item_key, value):
-        data = self.parsed_data.get(item_key)
-        if data and data.get('format_methods'):
-            for method_key in data.get('format_methods'):
+    def set_formating_data(self, item_obj, value):
+        if item_obj and item_obj.get('format_methods'):
+            for method_key in item_obj.get('format_methods'):
                 format_method = self.__getattribute__(method_key)
                 if format_method:
                     value = format_method(value)
@@ -513,6 +523,10 @@ class NutanixParser():
         # print(method('CJ (VLAN 102)'))
 
     def get_yml_dict(self):
+        """ get_yml_dict
+        reformat self.parsed_data to dict which will be dumped to yaml
+        :return:
+        """
         yml_dict = {}
 
         def format_val(val):
@@ -525,6 +539,9 @@ class NutanixParser():
             value = data.get('value')
             if value and data.get('is_to_playbook'):
                 if type(value) == list:
+                    yml_dict.update({
+                        f"{key}_array": format_val(value),
+                    })
                     for inx, item in enumerate(value):
                         yml_dict.update({
                             f"{key}_{inx + 1}": format_val(item),
@@ -543,6 +560,14 @@ class NutanixParser():
                         })
 
         return yml_dict
+
+    @staticmethod
+    def format_host_name(value):
+        return f"{'.'.join(value.split('.')[:-2])}"
+
+    @staticmethod
+    def format_redundancy_factor(value):
+        return ''.join([ch for ch in value if ch.isdigit()])
 
     @staticmethod
     def format_vlan_id(value):

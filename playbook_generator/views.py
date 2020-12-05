@@ -51,7 +51,6 @@ class PlaybookUploadStepViewForm(generic.FormView):
             self.config_upload = ConfigUpload.objects.create(parsed_data=parser_class.parsed_data)
             self.config_upload.config_yml_file.save(f"upload_{int(timezone.now().timestamp())}.yaml",
                                                     ContentFile(yaml.dump(parser_class.get_yml_dict(),
-                                                                          default_flow_style=False,
                                                                           encoding='utf-8')))
             self.config_upload.save()
             return redirect(to=self.get_success_url())
