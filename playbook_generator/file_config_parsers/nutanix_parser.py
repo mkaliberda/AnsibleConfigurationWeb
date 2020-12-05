@@ -20,6 +20,7 @@ class NutanixParser():
     CLUSTER_NETWORKING = 'cluster_networking'
     NODES = 'nodes'
     VLAN = 'vlan'
+    USER_VLAN = 'uesr_vlan'
     STORAGE = 'storage'
     SMTP = 'smtp'
 
@@ -31,6 +32,7 @@ class NutanixParser():
         'Nutanix VLANs': VLAN,
         'Support and Storage': STORAGE,
         'SMTP & Prism Central': SMTP,
+        'User VM VLAN(s)': USER_VLAN,
     }
 
     GROUPED_KEYS = {
@@ -79,6 +81,12 @@ class NutanixParser():
             'Gateway': 'gateway',
             'VLAN Tagging?': 'tagging',
         },
+        USER_VLAN: {
+            'VLAN Name': 'vlan_vm_name',
+            'VLAN ID': 'vlan_vm_id',
+            'Gateway': 'vlan_vm_geteway',
+            'VLAN Tagging?' : 'vlan_vm_tagging',
+        },
         STORAGE: {
             'Pulse Enabled (phone home)': 'pulse_enabled',
             'Storage Pool Name': 'storage_pool_name',
@@ -99,22 +107,6 @@ class NutanixParser():
             'PRISM Central Instance IP': 'prism_central_ip',
         }
     }
-    """
-        hypervisor_iso - This sounds weird but it should be empty. Essentially, we need the JSON to read "hypervisor_iso": {}
-        skip_hypervisor - Please default to false and don't pull anything from excel
-        nos_package - please default to the value and don't pull anything from excel
-        is_imaging - default to true and don't pull anything from excel
-        timezone - This can be removed entirely as it's no longer needed
-        cluster_init_successful - default to true and don't pull anything from excel
-        node1_image_now - default to true and don't pull anything from excel
-        node1_hypervisor - please default to kvm and don't pull anything from excel
-        node1_ipmi_configure_now - Please default to false and don't pull anything from excel
-        node1_is_bare_metal - default to true and don't pull anything from excel
-        node2_image_now - default to true and don't pull anything from excel
-        node2_hypervisor - please default to kvm and don't pull anything from excel
-        node2_ipmi_configure_now - Please default to false and don't pull anything from excel
-        node2_is_bare_metal - default to true and don't pull anything from excel
-    """
     parsed_data = {
         # Cluster Configuration
         'location': {
@@ -146,7 +138,7 @@ class NutanixParser():
             'group': CLUSTER_CONFIGURATION,
             'is_to_playbook': True,
             'value': '',
-            'format_methods': ['format_redundancy_factor'],
+            'format_methods': ['format_filter_to_digits_only'],
         },
         'aos': {
             'name': 'Acropolis Operating System (AOS) version',
@@ -255,6 +247,18 @@ class NutanixParser():
         'nodes': {
             'group': NODES,
         },
+
+        'hypervisor_ip': {
+            'group': NODES,
+            'is_to_playbook': True,
+            'value': [],
+        },
+
+        'cvm_ip': {
+            'group': NODES,
+            'is_to_playbook': True,
+            'value': [],
+        },
         'vlan_mgmt_and_cvm_name': {
             'group': VLAN,
             'is_to_playbook': True,
@@ -280,7 +284,7 @@ class NutanixParser():
             'group': VLAN,
             'is_to_playbook': True,
             'value': '',
-            'format_methods': ['format_vlan_id'],
+            'format_methods': ['format_filter_to_digits_only'],
         },
         'vlan_ipmi_gateway': {
             'group': VLAN,
@@ -292,6 +296,29 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': '',
         },
+        # vlan user
+        'vlan_vm_name': {
+            'group': USER_VLAN,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'vlan_vm_id': {
+            'group': USER_VLAN,
+            'is_to_playbook': True,
+            'value': '',
+            'format_methods': ['format_filter_to_digits_only'],
+        },
+        'vlan_vm_geteway': {
+            'group': USER_VLAN,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'vlan_vm_tagging': {
+            'group': USER_VLAN,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        # storage
         'pulse_enabled': {
             'group': STORAGE,
             'is_to_playbook': True,
@@ -375,6 +402,22 @@ class NutanixParser():
             'value': '',
         },
     }
+    """
+        hypervisor_iso - This sounds weird but it should be empty. Essentially, we need the JSON to read "hypervisor_iso": {}
+        skip_hypervisor - Please default to false and don't pull anything from excel
+        nos_package - please default to the value and don't pull anything from excel
+        is_imaging - default to true and don't pull anything from excel
+        timezone - This can be removed entirely as it's no longer needed
+        cluster_init_successful - default to true and don't pull anything from excel
+        node1_image_now - default to true and don't pull anything from excel
+        node1_hypervisor - please default to kvm and don't pull anything from excel
+        node1_ipmi_configure_now - Please default to false and don't pull anything from excel
+        node1_is_bare_metal - default to true and don't pull anything from excel
+        node2_image_now - default to true and don't pull anything from excel
+        node2_hypervisor - please default to kvm and don't pull anything from excel
+        node2_ipmi_configure_now - Please default to false and don't pull anything from excel
+        node2_is_bare_metal - default to true and don't pull anything from excel
+    """
 
     def __init__(self, file_contents=None, file_path=None, index_sheet=0):
         if file_contents:
@@ -391,6 +434,20 @@ class NutanixParser():
 
     def get_headers(self, row_num, to_group):
         return [self.GROUPED_KEYS[to_group].get(head, '') for head in self.current_row(row_num)]
+
+    def set_value_to_parsed_data(self, col_num, row_num, item_key):
+        if self.current_row(row_num)[col_num] and item_key and self.parsed_data.get(item_key):
+            if type(self.parsed_data.get(item_key)['value']) == list:
+
+                if self.current_row(row_num)[col_num] not in self.parsed_data.get(item_key)['value']:
+                    # array should contains uniqe values
+                    self.parsed_data.get(item_key)['value'].append(
+                        self.set_formating_data(self.parsed_data.get(item_key), self.current_row(row_num)[col_num])
+                    )
+            else:
+                self.parsed_data.get(item_key)['value'] = self.set_formating_data(
+                    self.parsed_data.get(item_key), self.current_row(row_num)[col_num]
+                )
 
     def parse_item_config(self, row_num, to_group, value_range=5):
         row_num += 2 # pass heading
@@ -413,18 +470,7 @@ class NutanixParser():
                 if not item_keys:
                     return row_num
                 for item_key in item_keys:
-                    if self.current_row(row_num)[n] and item_key and self.parsed_data.get(item_key):
-                        if type(self.parsed_data.get(item_key)['value']) == list:
-
-                            if self.current_row(row_num)[n] not in self.parsed_data.get(item_key)['value']:
-                                # array should contains uniqe values
-                                self.parsed_data.get(item_key)['value'].append(
-                                    self.set_formating_data(self.parsed_data.get(item_key), self.current_row(row_num)[n])
-                                )
-                        else:
-                            self.parsed_data.get(item_key)['value'] = self.set_formating_data(
-                                self.parsed_data.get(item_key), self.current_row(row_num)[n]
-                            )
+                    self.set_value_to_parsed_data(n, row_num, item_key)
             row_num += 1
         return row_num
 
@@ -465,6 +511,9 @@ class NutanixParser():
                     node_dict.update({
                         headers[inx]: self.set_formating_data(NODE_VALUES.get(headers[inx]), value)
                     })
+                    if self.parsed_data.get(headers[inx]):
+                        "set values to base dict"
+                        self.set_value_to_parsed_data(col_num=inx, row_num=row_num, item_key=headers[inx])
             if node_dict:
                 node_dict.update(DEFAULT_VALUES)
                 if node_dict.get(NODE_KEY) not in self.parsed_data[self.NODES]:
@@ -494,6 +543,18 @@ class NutanixParser():
             row_num += 1
         return row_num
 
+    def parse_heading_table_one_row(self, row_num, to_group):
+
+        headers = self.get_headers(row_num, to_group)
+        row_num += 1
+        for inx in range(1, len(self.current_row(row_num))):
+            if headers[inx] and self.parsed_data.get(headers[inx]):
+                value = self.set_formating_data(self.parsed_data.get(headers[inx]),
+                                                self.current_row(row_num)[inx])
+                self.parsed_data[headers[inx]]['value'] = value
+        row_num += 1
+        return row_num
+
     def parse_with_type(self, row_num):
         """ parse_with_type
         select method for parse grouped block
@@ -509,6 +570,8 @@ class NutanixParser():
             row_num = self.parse_nodes_heading_table(row_num, grouped_heading)
         if grouped_heading == self.VLAN:
             row_num = self.parse_prefix_heading_table(row_num, grouped_heading)
+        if grouped_heading == self.USER_VLAN:
+            row_num = self.parse_heading_table_one_row(row_num, grouped_heading)
         if grouped_heading == self.STORAGE:
             row_num = self.parse_item_config(row_num, grouped_heading, 4)
         if grouped_heading == self.SMTP:
@@ -573,19 +636,21 @@ class NutanixParser():
         return yml_dict
 
     @staticmethod
-    def format_host_name(value):
+    def format_host_name(value) -> str:
         return f"{'.'.join(value.split('.')[:-2])}"
 
     @staticmethod
-    def format_redundancy_factor(value):
+    def format_filter_to_digits_only(value) -> str:
+        """ format_filter_to_digits_only
+        """
         return ''.join([ch for ch in value if ch.isdigit()])
 
     @staticmethod
-    def format_vlan_id(value):
+    def format_vlan_id(value) -> str:
         return value.split(' ')[-1].replace(')', '')
 
     @staticmethod
-    def format_integer(value):
+    def format_integer(value) -> str:
         return str(int(value))
 
 
