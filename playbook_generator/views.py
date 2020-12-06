@@ -1,4 +1,5 @@
 import yaml
+import json
 
 from django.conf import settings
 from django.utils import timezone
@@ -54,6 +55,8 @@ class PlaybookUploadStepViewForm(generic.FormView):
                                                                           default_flow_style=False,
                                                                           sort_keys=False,
                                                                           encoding='utf-8')))
+            self.config_upload.config_json_file.save(f"upload_{int(timezone.now().timestamp())}.json",
+                                                ContentFile(json.dumps(parser_class.get_json_dict(), indent=2)))
             self.config_upload.save()
             return redirect(to=self.get_success_url())
         else:

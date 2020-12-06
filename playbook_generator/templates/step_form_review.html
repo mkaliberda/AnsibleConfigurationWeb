@@ -52,8 +52,13 @@
       </thead>
     </table>
     <div class="uk-container">
-      <h3>To download the yaml file, click the link:</h3>
-      <a href="{{ uploaded_config.config_yml_file.url }}">{{ uploaded_config.config_yml_file.name }}</a>
+      <h3>To download formatted files, click the link:</h3>
+      <p>
+        <a href="{{ uploaded_config.config_yml_file.url }}">{{ uploaded_config.config_yml_file.name }}</a>
+      </p>
+      <p>
+        <a href="{{ uploaded_config.config_json_file.url }}">{{ uploaded_config.config_json_file.name }}</a>
+      </p>
     </div>
     </div>
 {#    {% if value.is_to_playbook %}#}

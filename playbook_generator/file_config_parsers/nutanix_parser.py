@@ -234,13 +234,13 @@ class NutanixParser():
         },
         'dns_server': {
             'name': 'DNS Servers',
-            'group': CLUSTER_NETWORKING,
+            'group': CLUSTER_CONFIGURATION,
             'is_to_playbook': True,
             'value': [],
         },
         'ntp_server': {
             'name': 'NTP Servers',
-            'group': CLUSTER_NETWORKING,
+            'group': CLUSTER_CONFIGURATION,
             'is_to_playbook': True,
             'value': [],
         },
@@ -276,6 +276,11 @@ class NutanixParser():
             'value': '',
         },
         'vlan_mgmt_and_cvm_tagging': {
+            'group': VLAN,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'vlan_ipmi_name': {
             'group': VLAN,
             'is_to_playbook': True,
             'value': '',
@@ -634,6 +639,75 @@ class NutanixParser():
                         })
 
         return yml_dict
+
+    def get_json_dict(self):
+        """
+            "current_cvm_vlan_tag": "102",
+            "hypervisor_nameserver": "10.95.21.44",
+            "hypervisor_password": "nutanix",
+            "clusters": [{
+                "enable_ns": false,
+                "cluster_members": [
+                    "10.15.33.3",
+                    "10.15.33.4"
+                  ],
+            }]
+            "cluster_init_now": true,
+            "hypervisor_ntp_servers": "10.195.121.44"
+            "tests": {
+                "run_syscheck": true,
+                "run_ncc": true
+              },
+        """
+        json_dict = {
+            'clusters': [],
+            'blocks': [],
+        }
+
+        def format_val(val):
+            if type(val) == bool:
+                return val
+            elif type(val) == list:
+                return ', '.join(val)
+            else:
+                return str(val)
+
+        def change_key(key):
+            changed_keys = {
+                'dns_server': 'cvm_ntp_servers',
+                'ntp_server': 'cvm_dns_servers',
+            }
+            return changed_keys.get(key, key)
+
+        cluster_config = {}
+        for key, data in self.parsed_data.items():
+            value = data.get('value')
+            if value and data.get('is_to_playbook'):
+                if data.get('group') == self.CLUSTER_CONFIGURATION:
+                    cluster_config.update({
+                        change_key(key): format_val(value),
+                    })
+                else:
+                    json_dict.update({
+                        change_key(key): format_val(value),
+                    })
+            if key == 'nodes':
+                for inx, (node_key, node_obj) in enumerate(data.items()):
+                    node_dict = {}
+                    if node_key == 'group':
+                        continue
+                    for k, node_val in node_obj.items():
+                        node_dict.update({
+                            change_key(k): format_val(node_val)
+                        })
+                    json_dict['blocks'].append({
+                        'block_id': node_dict.pop('block_id'),
+                        'nodes': [node_dict],
+                    })
+        json_dict['clusters'].append({
+            **cluster_config,
+        })
+        return json_dict
 
     @staticmethod
     def format_host_name(value) -> str:

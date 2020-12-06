@@ -55,5 +55,6 @@ class NutanixParserTestCases(TestCase):
         parser = NutanixParser(file_path=fin_path)
         parser.parse_file()
         # parser.get_parsed_data()
-        parser.get_yml_dict()
+        # parser.get_yml_dict()
+        parser.get_json_dict()
         # self.assertDictEqual(self.parsed_data, parser.parsed_data)
