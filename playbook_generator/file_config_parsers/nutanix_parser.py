@@ -112,30 +112,35 @@ class NutanixParser():
         'location': {
             'name': 'Location',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
             'is_to_playbook': False,
             'value': '',
         },
         'cluster_name': {
             'name': 'Cluster Name',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': True,
             'is_to_playbook': True,
             'value': '',
         },
         'cluster_license': {
             'name': 'Cluster License',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
             'is_to_playbook': False,
             'value': '',
         },
         'cluster_external_ip': {
             'name': 'Cluster External IP (VIP)',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': True,
             'is_to_playbook': True,
             'value': '',
         },
         'redundancy_factor': {
             'name': 'Cluster Redundancy Factor',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': True,
             'is_to_playbook': True,
             'value': '',
             'format_methods': ['format_filter_to_digits_only'],
@@ -143,54 +148,63 @@ class NutanixParser():
         'aos': {
             'name': 'Acropolis Operating System (AOS) version',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
             'is_to_playbook': False,
             'value': '',
         },
         'hypervisor_iso': {
             'name': 'Hervisor ISO',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
             'is_to_playbook': True,
             'value': {},
         },
         'skip_hypervisor': {
             'name': 'Skip Hypervisor',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
             'is_to_playbook': True,
             'value': False,
         },
         'hypervisor_version': {
             'name': 'Hypervisor Version & Build',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
             'is_to_playbook': False,
             'value': '',
         },
         'nos_package': {
             'name': 'Nos Package',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
             'is_to_playbook': True,
             'value': '/home/nutanix/foundation/nos/nutanix_installer_package-release-euphrates-5.15.3-stable-x86_64.tar.gz',
         },
         'is_imaging': {
             'name': '',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
             'is_to_playbook': True,
             'value': True,
         },
         'witness_appliance_version': {
             'name': 'Nutanix Witness Appliance Version',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
             'is_to_playbook': False,
             'value': '',
         },
         'witness_address': {
             'name': 'Nutanix Witness Appliance IP Address',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
             'is_to_playbook': True,
             'value': '',
         },
         'cluster_init_successful': {
             'name': 'cluster_init_successful',
             'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': True,
             'is_to_playbook': True,
             'value': True,
         },
@@ -234,13 +248,15 @@ class NutanixParser():
         },
         'dns_server': {
             'name': 'DNS Servers',
-            'group': CLUSTER_CONFIGURATION,
+            'group': CLUSTER_NETWORKING,
+            'is_cluster_json': True,
             'is_to_playbook': True,
             'value': [],
         },
         'ntp_server': {
             'name': 'NTP Servers',
-            'group': CLUSTER_CONFIGURATION,
+            'group': CLUSTER_NETWORKING,
+            'is_cluster_json': True,
             'is_to_playbook': True,
             'value': [],
         },
@@ -251,6 +267,7 @@ class NutanixParser():
         'hypervisor_ip': {
             'group': NODES,
             'is_to_playbook': True,
+            'is_cluster_json': True,
             'value': [],
         },
 
@@ -616,7 +633,7 @@ class NutanixParser():
 
         for key, data in self.parsed_data.items():
             value = data.get('value')
-            if value and data.get('is_to_playbook'):
+            if value is not None and data.get('is_to_playbook'):
                 if type(value) == list:
                     yml_dict.update({
                         f"{key}_array": format_val(value),
@@ -642,29 +659,60 @@ class NutanixParser():
 
     def get_json_dict(self):
         """
-            "current_cvm_vlan_tag": "102",
-            "hypervisor_nameserver": "10.95.21.44",
-            "hypervisor_password": "nutanix",
+            "current_cvm_vlan_tag": "102", - This value should come from the spreadsheet and is the same as "CVM/Hypervisor VLAN" in the spreadsheet
+            "hypervisor_nameserver": "10.95.21.44", - This should be the array of DNS servers
+            "hypervisor_password": "nutanix", - Just default this to nutanix, no need to pull anything from spreadsheet
             "clusters": [{
-                "enable_ns": false,
-                "cluster_members": [
-                    "10.15.33.3",
-                    "10.15.33.4"
-                  ],
+            "enable_ns": false,
+            "cluster_members": ["10.15.33.3","10.15.33.4"], This should be an array of the nodeX_hypervisor_ip fields
             }]
-            "cluster_init_now": true,
-            "hypervisor_ntp_servers": "10.195.121.44"
+            "cluster_init_now": true, - Just default this to true, no need to pull anything from spreadsheet
+            "hypervisor_ntp_servers": "10.195.121.44" This should be the array of NTP servers
             "tests": {
-                "run_syscheck": true,
-                "run_ncc": true
-              },
+            "run_syscheck": true, - Just default this to true, no need to pull anything from spreadsheet
+            "run_ncc": true - Just default this to true, no need to pull anything from spreadsheet
+            },
         """
+        default_values = {
+            'hypervisor_password': 'nutanix',
+            'tests': {
+                'run_syscheck': True,
+                'run_ncc': True,
+            },
+        }
+
         json_dict = {
             'clusters': [],
             'blocks': [],
+            **default_values,
         }
 
-        def format_val(val):
+        values_to_copy = {
+            # copy from key: copy to key
+            'hypervisor_nameserver': 'dns_server',
+            'current_cvm_vlan_tag': 'vlan_mgmt_and_cvm_id',
+        }
+
+        values_to_copy_cluster = {
+            'hypervisor_ntp_servers': 'ntp_server',
+        }
+
+        clusters_default_values = {
+            'enable_ns': False,
+            'cluster_init_now': True,
+        }
+
+        def copy_values(value_to_copy):
+            copied_values = {}
+            for target_key, dist_key in value_to_copy.items():
+                if self.parsed_data.get(dist_key):
+                    copied_values[target_key] = format_val(self.parsed_data.get(dist_key).get('value'), dist_key)
+            return copied_values
+
+        def format_val(val, key):
+            save_format = ['hypervisor_ip', 'hypervisor_iso']
+            if key in save_format:
+                return val
             if type(val) == bool:
                 return val
             elif type(val) == list:
@@ -672,40 +720,46 @@ class NutanixParser():
             else:
                 return str(val)
 
-        def change_key(key):
+        def change_cluster_key(key):
             changed_keys = {
-                'dns_server': 'cvm_ntp_servers',
-                'ntp_server': 'cvm_dns_servers',
+                'dns_server': 'cvm_dns_servers',
+                'ntp_server': 'cvm_ntp_servers',
+                'hypervisor_ip': 'cluster_members'
             }
             return changed_keys.get(key, key)
+
+        def change_key(key):
+            return key
 
         cluster_config = {}
         for key, data in self.parsed_data.items():
             value = data.get('value')
-            if value and data.get('is_to_playbook'):
-                if data.get('group') == self.CLUSTER_CONFIGURATION:
-                    cluster_config.update({
-                        change_key(key): format_val(value),
-                    })
+            if value is not None and data.get('is_to_playbook'):
+                if data.get('is_cluster_json'):
+                    cluster_config.update({ change_cluster_key(key): format_val(value, key) })
                 else:
-                    json_dict.update({
-                        change_key(key): format_val(value),
-                    })
+                    json_dict.update({ change_key(key): format_val(value, key) })
             if key == 'nodes':
                 for inx, (node_key, node_obj) in enumerate(data.items()):
                     node_dict = {}
                     if node_key == 'group':
                         continue
                     for k, node_val in node_obj.items():
-                        node_dict.update({
-                            change_key(k): format_val(node_val)
-                        })
+                        node_dict.update({ change_key(k): format_val(node_val, key) })
+
                     json_dict['blocks'].append({
                         'block_id': node_dict.pop('block_id'),
                         'nodes': [node_dict],
                     })
+        copied_val = copy_values(values_to_copy)
+
+        json_dict.update({ **copied_val })
+
+        clusters_copied_val = copy_values(values_to_copy_cluster)
         json_dict['clusters'].append({
+            **clusters_default_values,
             **cluster_config,
+            **clusters_copied_val,
         })
         return json_dict
 
