@@ -267,12 +267,14 @@ class NutanixParser():
         'hypervisor_ip': {
             'group': NODES,
             'is_to_playbook': True,
-            'is_cluster_json': True,
+            'is_cluster_json': False,
             'value': [],
         },
 
         'cvm_ip': {
             'group': NODES,
+            'is_cluster_json': True,
+            'is_body_json': True,
             'is_to_playbook': True,
             'value': [],
         },
@@ -710,12 +712,15 @@ class NutanixParser():
             return copied_values
 
         def format_val(val, key):
-            save_format = ['hypervisor_ip', 'hypervisor_iso']
+            save_format = ['cluster_members', 'hypervisor_iso']
+            cast_to_int = ['redundancy_factor',]
             if key in save_format:
                 return val
+            if key in cast_to_int:
+                return int(val)
             if type(val) == bool:
                 return val
-            elif type(val) == list:
+            if type(val) == list:
                 return ', '.join(val)
             else:
                 return str(val)
@@ -724,19 +729,27 @@ class NutanixParser():
             changed_keys = {
                 'dns_server': 'cvm_dns_servers',
                 'ntp_server': 'cvm_ntp_servers',
-                'hypervisor_ip': 'cluster_members'
+                'cvm_ip': 'cluster_members'
             }
             return changed_keys.get(key, key)
 
-        def change_key(key):
-            return key
+        def change_key(key, is_node=False):
+            changed_keys = {
+                'cvm_ip': 'cvm_ip_array',
+                'hypervisor_ip': 'hypervisor_ip_array',
+            }
+            if is_node:
+                return key
+            return changed_keys.get(key, key)
 
         cluster_config = {}
         for key, data in self.parsed_data.items():
             value = data.get('value')
             if value is not None and data.get('is_to_playbook'):
                 if data.get('is_cluster_json'):
-                    cluster_config.update({ change_cluster_key(key): format_val(value, key) })
+                    cluster_config.update({ change_cluster_key(key): format_val(value, change_cluster_key(key)) })
+                    if data.get('is_body_json'):
+                        json_dict.update({change_key(key): format_val(value, key)})
                 else:
                     json_dict.update({ change_key(key): format_val(value, key) })
             if key == 'nodes':
@@ -745,7 +758,7 @@ class NutanixParser():
                     if node_key == 'group':
                         continue
                     for k, node_val in node_obj.items():
-                        node_dict.update({ change_key(k): format_val(node_val, key) })
+                        node_dict.update({ change_key(k, True): format_val(node_val, key) })
 
                     json_dict['blocks'].append({
                         'block_id': node_dict.pop('block_id'),
