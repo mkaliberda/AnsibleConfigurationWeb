@@ -1,0 +1,46 @@
+{% extends 'playbook_form_stepper.html' %}
+{% block base_form_stepper_html %}
+  <div class="uk-flex uk-flex-column uk-flex-center uk-flex-middle upload__form__container">
+      <div class="uk-margin uk-f uk-flex uk-flex-column">
+      </div>
+      <div class="uk-container">
+        <p>Ansible is used to deploy, audit and customize the cluster.</p>
+        <p>To run the corresponding Ansible playbook SSH to the Ansible server and copy/paste the command below:</p>
+        <div class="uk-comment-body">
+            <div class="uk-margin">
+              <textarea class="terminal uk-textarea" rows="5" placeholder="Textarea" id="copy-text">ansible-playbook {{ nodes_path }} --extra-vars {{ uploaded_config.config_yml_file.path }} --tags "{{ uploaded_config.tag }}"</textarea>
+            </div>
+        </div>
+        <a class="uk-margin-small uk-button uk-button-default" id="copy_btn">Copy</a>
+        <p>Monitor the Ansible output for errors/completion.</p>
+        <a class="uk-margin uk-button uk-button-default" href="javascript:history.back()">Back to review</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block base_js %}
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script>
+  $(document).ready(function () {
+    const copyToClipboard = str => {
+      const el = document.createElement('textarea');
+      el.value = str;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    };
+
+     $("#copy_btn").click(function(e) {
+        e.preventDefault();
+        var copiedTextEl = $('#copy-text');
+        copyToClipboard(copiedTextEl.text());
+        UIkit.notification({message: 'copied!',
+        timeout: 2000,});
+     });
+   });
+  </script>
+{% endblock %}

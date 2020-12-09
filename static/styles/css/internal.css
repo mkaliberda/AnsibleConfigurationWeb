@@ -79,3 +79,24 @@
   padding: 0.5rem;
   font-size: 0.9rem;
 }
+
+textarea.terminal {
+  outline: 0;
+  background: #1a1a1a;
+  border-color: #2b2b2b;
+  box-shadow: none;
+  color: #ffff;
+  font-family: unset;
+}
+
+textarea.terminal:focus, textarea.terminal:active, textarea.terminal:hover {
+  outline: 0;
+  background: #1a1a1a;
+  border-color: #2b2b2b;
+  color: #ffff;
+}
+
+textarea.terminal::selection {
+  color: #1a1a1a;
+  background: #ffffff;
+}

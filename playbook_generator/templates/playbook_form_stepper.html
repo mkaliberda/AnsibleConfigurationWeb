@@ -4,8 +4,8 @@
   <div class="uk-flex uk-flex-middle uk-flex-center uk-margin">
     <ul class="uk-dotnav">
       <li class="uk-active"><a></a></li>
-      <li><a></a></li>
-      <li><a></a></li>
+      <li {% if 'step/review' in request.path or 'step/instruction' in request.path  %} class="uk-active" {% endif %}><a></a></li>
+      <li {% if 'step/instruction' in request.path  %} class="uk-active" {% endif %}><a></a></li>
   </ul>
   </div>
   <div class="uk-container uk-margin">

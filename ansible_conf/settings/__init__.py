@@ -145,3 +145,5 @@ MEDIA_URL = '/uploads/'
 
 MEDIA_ROOT = PATH_UPLOAD_CONFIGS
 
+STATIC_NODES_CONFIG_PATH = env('STATIC_NODES_CONFIG_PATH', default='/home/jweier/Repo/infrastructureascode-1/ntx2node.yml')
+

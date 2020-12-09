@@ -4,8 +4,8 @@
 
 {#    <p>{{ key }}: {{ value }}</p>#}
     <div class="uk-container">
+      <h3 class="color__heading">Please, review parsed vars</h3>
       <table class="review-vars__table uk-table uk-table-divider uk-table-small uk-table-justify">
-      <caption>Please, take a look at parse vars</caption>
       <thead>
         <tr>
           <th class="color__heading">Var key</th>
@@ -51,15 +51,36 @@
         </tr>
       </thead>
     </table>
-    <div class="uk-container">
-      <h3>To download formatted files, click the link:</h3>
-      <p>
-        <a href="{{ uploaded_config.config_yml_file.url }}">{{ uploaded_config.config_yml_file.name }}</a>
-      </p>
-      <p>
-        <a href="{{ uploaded_config.config_json_file.url }}">{{ uploaded_config.config_json_file.name }}</a>
-      </p>
+      <div class="uk-container">
+        <h3>To download formatted files, click the link:</h3>
+        <p>
+          <a href="{{ uploaded_config.config_yml_file.url }}">{{ uploaded_config.config_yml_file.name }}</a>
+        </p>
+        <p>
+          <a href="{{ uploaded_config.config_json_file.url }}">{{ uploaded_config.config_json_file.name }}</a>
+        </p>
+      </div>
     </div>
+    <hr class="uk-divider-icon">
+    <div class="uk-container uk-margin">
+      <form method="post" enctype="multipart/form-data" id="modeForm">
+        {% csrf_token %}
+        <fieldset class="uk-fieldset">
+          <legend class="uk-legend">Please, select the mode </legend>
+          <div class="uk-margin">
+            {{ form.uploaded_file }}
+            <select class="uk-select" name="tags" required>
+              {% for item in form.tags %}
+                {{ item }}
+              {% endfor %}
+            </select>
+          </div>
+        </fieldset>
+        <div class="uk-container uk-margin">
+          <a class="uk-button uk-button-default" href="javascript:history.back()">Back to upload</a>
+          <button class="uk-button uk-button-primary">Accept</button>
+        </div>
+      </form>
     </div>
 {#    {% if value.is_to_playbook %}#}
 {#      <p>{{ key }} {{ value.name }}: {{ value.value }}</p>#}

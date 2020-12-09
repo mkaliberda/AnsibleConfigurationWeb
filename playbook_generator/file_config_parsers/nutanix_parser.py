@@ -620,12 +620,14 @@ class NutanixParser():
         # method = self.__getattribute__('format_vlan_id')
         # print(method('CJ (VLAN 102)'))
 
-    def get_yml_dict(self):
+    def get_yml_dict(self, json_path=None):
         """ get_yml_dict
         reformat self.parsed_data to dict which will be dumped to yaml
         :return:
         """
-        yml_dict = {}
+        yml_dict = {
+            'foundation_json': json_path
+        }
 
         def format_val(val):
             if type(val) == bool:

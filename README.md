@@ -45,3 +45,4 @@ cd to the project folder
 
 ``pip install -r requirements.txt``
 
+`` python manage.py sass static/styles/scss/ static/styles/css/``

@@ -76,6 +76,24 @@
   }
 }
 
+textarea.terminal {
+  outline: 0;
+  background: #1a1a1a;
+  border-color: #2b2b2b;
+  box-shadow: none;
+  color: #ffff;
+  font-family: unset;
+  &:focus, &:active, &:hover {
+    outline: 0;
+    background: #1a1a1a;
+    border-color: #2b2b2b;
+    color: #ffff;
+  }
+  &::selection {
+    color: #1a1a1a;
+    background: #ffffff;
+  }
+}
 
 
 
