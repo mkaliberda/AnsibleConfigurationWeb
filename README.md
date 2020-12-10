@@ -25,7 +25,7 @@
 
 create db
  
-```sudo passwd postgres``` tzRfwBJvgNNR99USKW9AJvN
+```sudo passwd postgres```
 
 ```psql -d template1 -c "ALTER USER postgres WITH PASSWORD 'UAzPc8vYQn4492Xp';"
 
