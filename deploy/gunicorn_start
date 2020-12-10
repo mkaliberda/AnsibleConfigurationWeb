@@ -1,0 +1,24 @@
+#!/bin/bash
+
+NAME="ansible_web_app"
+DIR=/srv/AnsibleConfigurationWeb
+USER=ec2-user
+WORKERS=2
+BIND=unix:/srv/AnsibleConfigurationWeb/venv/run/gunicorn.sock
+DJANGO_SETTINGS_MODULE=ansible_conf.settings
+DJANGO_WSGI_MODULE=ansible_conf.wsgi
+LOG_LEVEL=error
+
+cd $DIR
+source venv/bin/activate
+
+export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+export PYTHONPATH=$DIR:$PYTHONPATH
+
+exec venv/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
+  --name $NAME \
+  --workers $WORKERS \
+  --user=$USER \
+  --bind=$BIND \
+  --log-level=$LOG_LEVEL \
+  --log-file=-
