@@ -13,13 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path
-from playbook_generator.views import (PlaybookUploadStepViewForm, PlaybookHomeView,
+from django.urls import path, include
+from playbook_generator.views import (PlaybookHomeView, PlaybookSelectTagViewForm, PlaybookUploadStepViewForm,
                                       PlaybookReviewStepViewForm, PlaybookInstructionStepViewForm)
+
 
 urlpatterns = [
     path('', PlaybookHomeView.as_view(), name='playbook_home_view'),
-    path('playbook-form/<str:service_type>/step/upload/',
+    path('playbook-form/<str:service_type>/step/select_tag/',
+         PlaybookSelectTagViewForm.as_view(), name='playbook_step_select_tag'),
+    path('playbook-form/<str:service_type>/step/upload/<uuid:config_uuid>/',
          PlaybookUploadStepViewForm.as_view(), name='playbook_step_upload'),
     path('playbook-form/<str:service_type>/step/review/<uuid:config_uuid>/',
          PlaybookReviewStepViewForm.as_view(), name='playbook_step_review'),

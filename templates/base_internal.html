@@ -26,10 +26,10 @@
           </a>
           <ul class="uk-nav-sub">
             <li>
-              <a href="{% url 'playbook_generator:playbook_step_upload' service_type='nutanix' %}"
+              <a href="{% url 'playbook_generator:playbook_step_select_tag' service_type='nutanix' %}"
                  class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
               >
-                Run new payload
+                Run new playbook
               </a>
             </li>
           </ul>
@@ -40,10 +40,10 @@
           </a>
           <ul class="uk-nav-sub">
             <li>
-              <a href="{% url 'playbook_generator:playbook_step_upload' service_type='vmware' %}"
+              <a href="{% url 'playbook_generator:playbook_step_select_tag' service_type='vmware' %}"
                  class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
               >
-                Run new payload
+                Run new playbook
               </a>
             </li>
           </ul>

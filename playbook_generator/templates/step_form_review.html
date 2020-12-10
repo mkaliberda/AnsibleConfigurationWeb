@@ -27,20 +27,24 @@
                   <tr></tr>
                 </thead>
                 {% for obj_key, obj_value in node_value.items %}
-                  <tr>
-                    <td></td>
-                    <td>{{ obj_key }}</td>
-                    <td>{{ obj_value }}</td>
-                  </tr>
+                  {% if obj_key not in not_display_key %}
+                    <tr>
+                      <td></td>
+                      <td>{{ obj_key }}</td>
+                      <td>{{ obj_value }}</td>
+                    </tr>
+                  {% endif %}
                 {% endfor %}
               {% endif %}
             {% endfor %}
           {% else %}
+            {% if key not in not_display_key %}
             <tr>
               <td>{{ key }}</td>
               <td>{{ value.value }}</td>
               <td></td>
             </tr>
+            {% endif %}
           {% endif %}
         {% endfor %}
       </tbody>
@@ -61,30 +65,14 @@
         </p>
       </div>
     </div>
-    <hr class="uk-divider-icon">
     <div class="uk-container uk-margin">
-      <form method="post" enctype="multipart/form-data" id="modeForm">
-        {% csrf_token %}
-        <fieldset class="uk-fieldset">
-          <legend class="uk-legend">Please, select the mode </legend>
-          <div class="uk-margin">
-            {{ form.uploaded_file }}
-            <select class="uk-select" name="tags" required>
-              {% for item in form.tags %}
-                {{ item }}
-              {% endfor %}
-            </select>
-          </div>
-        </fieldset>
-        <div class="uk-container uk-margin">
-          <a class="uk-button uk-button-default" href="javascript:history.back()">Back to upload</a>
-          <button class="uk-button uk-button-primary">Accept</button>
-        </div>
-      </form>
+      <a class="uk-button uk-button-default" href="javascript:history.back()">Back to upload</a>
+      <a class="uk-button uk-button-primary"
+         href="{% url 'playbook_generator:playbook_step_instruction' service_type=service_type config_uuid=config_uuid %}"
+      >
+        Accept
+      </a>
     </div>
-{#    {% if value.is_to_playbook %}#}
-{#      <p>{{ key }} {{ value.name }}: {{ value.value }}</p>#}
-{#    {% endif %}#}
 {% endblock %}
 {% block base_js %}
 {% endblock %}

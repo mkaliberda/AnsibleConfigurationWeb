@@ -1,0 +1,38 @@
+{% extends 'playbook_form_stepper.html' %}
+{% block base_form_stepper_html %}
+  <form method="post" enctype="multipart/form-data" id="importForm">
+    {% csrf_token %}
+    <fieldset class="uk-fieldset">
+      <legend class="uk-legend">Please, select the mode</legend>
+    </fieldset>
+    {% if 'vmware' in request.path  %}
+    <div class="uk-flex uk-flex-column uk-flex-center uk-flex-middle upload__form__container">
+      <div class="uk-margin uk-flex uk-flex-column">
+        <h3 class="color__heading"> Coming soon!</h3>
+      </div>
+    </div>
+    {% else %}
+    <div class="uk-flex uk-flex-column uk-flex-center uk-flex-middle upload__form__container">
+      <div class="uk-margin">
+        <div class="uk-margin">
+          <select class="tag-select uk-select" name="tags" required>
+            {% for item in form.tags %}
+              {{ item }}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+          {% for error in form.uploaded_file.errors %}
+            <span class="color__error">{{ error }}</span>
+          {% endfor %}
+      <div>
+        <button class="uk-margin-small uk-button uk-button-primary">
+           SELECT
+         </button>
+      </div>
+    </div>
+    {% endif %}
+  </form>
+{% endblock %}
+{% block base_js %}
+{% endblock %}

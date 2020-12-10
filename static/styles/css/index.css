@@ -28,3 +28,7 @@
 .uk-logo img {
   max-width: 150px;
 }
+
+.tag-select {
+  min-width: 300px;
+}
