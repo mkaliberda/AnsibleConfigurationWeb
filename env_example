@@ -1,0 +1,8 @@
+STATIC_NODES_CONFIG_PATH=/home/jweier/Repo/infrastructureascode-1/ntx2node.yml
+PATH_UPLOAD_CONFIGS=./uploads
+IS_PROD=True
+DATABASES_NAME= #database name
+DATABASES_USER= #database user
+DATABASES_PASSWORD=
+DATABASES_HOST=localhost #keep localhost for local db
+DATABASES_PORT=5432 #keep 5432 for lot cases
