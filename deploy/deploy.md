@@ -1,6 +1,6 @@
 ###Manual deploy to AWS instance CentOS
 
-after clone this project 
+clone this project into `srv/folder`
 
 ``mv env_example .env`` please check information inside
 
