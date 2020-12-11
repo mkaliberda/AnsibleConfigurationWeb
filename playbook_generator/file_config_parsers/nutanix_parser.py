@@ -1,5 +1,4 @@
 from django.conf import settings
-import pandas
 import os
 import xlrd
 import itertools

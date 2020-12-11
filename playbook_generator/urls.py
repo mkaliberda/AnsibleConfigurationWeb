@@ -20,9 +20,9 @@ from playbook_generator.views import (PlaybookHomeView, PlaybookSelectTagViewFor
 
 urlpatterns = [
     path('', PlaybookHomeView.as_view(), name='playbook_home_view'),
-    path('playbook-form/<str:service_type>/step/select_tag/',
-         PlaybookSelectTagViewForm.as_view(), name='playbook_step_select_tag'),
-    path('playbook-form/<str:service_type>/step/upload/<uuid:config_uuid>/',
+    # path('playbook-form/<str:service_type>/step/select_tag/',
+    #      PlaybookSelectTagViewForm.as_view(), name='playbook_step_select_tag'),
+    path('playbook-form/<str:service_type>/step/upload/',
          PlaybookUploadStepViewForm.as_view(), name='playbook_step_upload'),
     path('playbook-form/<str:service_type>/step/review/<uuid:config_uuid>/',
          PlaybookReviewStepViewForm.as_view(), name='playbook_step_review'),

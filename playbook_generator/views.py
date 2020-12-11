@@ -15,7 +15,7 @@ from playbook_generator.models import ConfigUpload
 
 
 class PlaybookHomeView(generic.RedirectView):
-    pattern_name = 'playbook_generator:playbook_step_select_tag'
+    pattern_name = 'playbook_generator:playbook_step_upload'
 
     def dispatch(self, request, *args, **kwargs):
         kwargs['service_type'] = PlaybookServiceTypes.NUTANIX.value
@@ -23,6 +23,10 @@ class PlaybookHomeView(generic.RedirectView):
 
 
 class PlaybookSelectTagViewForm(generic.FormView):
+    """
+    turned off
+    form uses in playbook_step_upload
+    """
     template_name = 'step_form_select_tag.html'
     form_class = PlaybookModeForm
     uploaded_config = None
@@ -52,9 +56,9 @@ class PlaybookUploadStepViewForm(generic.FormView):
                        kwargs={'service_type': self.kwargs.get('service_type'),
                                'config_uuid': self.uploaded_config.uuid})
 
-    def dispatch(self, request, *args, **kwargs):
-        self.uploaded_config = get_object_or_404(ConfigUpload, uuid=kwargs.get("config_uuid"))
-        return super().dispatch(request, *args, **kwargs)
+    # def dispatch(self, request, *args, **kwargs):
+    #     self.uploaded_config = get_object_or_404(ConfigUpload, uuid=kwargs.get("config_uuid"))
+    #     return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
@@ -71,7 +75,9 @@ class PlaybookUploadStepViewForm(generic.FormView):
 
             yaml.add_representer(str, quoted_presenter)
 
-            self.uploaded_config.parsed_data=parser_class.parsed_data
+            self.uploaded_config = ConfigUpload.objects.create(parsed_data=parser_class.parsed_data,
+                                                             tag=request.POST.get('tags'))
+
             self.uploaded_config.config_json_file.save(
                 f"upload_{int(timezone.now().timestamp())}.json",
                 ContentFile(json.dumps(parser_class.get_json_dict(), indent=2))
@@ -104,7 +110,7 @@ class PlaybookReviewStepViewForm(generic.TemplateView):
             'ipmi_user', 'ipmi_password', 'asset_tag', 'image_now', 'hypervisor', 'ipmi_configure_now', 'is_bare_metal',
             'vlan_ipmi_name', 'pulse_enabled', 'pulse_email_contact',
             'smtp_address', 'smtp_protocol', 'smtp_port', 'smtp_username', 'smtp_password', 'smtp_security_mode',
-            'smtp_address_to', 'smtp_address_from', 'prism_central_ip',
+            'smtp_address_to', 'smtp_address_from', 'prism_central_ip', 'hypervisor_ip', 'cvm_ip',
         ]
         kwargs.update({ 'uploaded_config': self.uploaded_config, 'not_display_key': not_display_key })
         return super().get_context_data(**kwargs)
