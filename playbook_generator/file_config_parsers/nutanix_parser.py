@@ -22,6 +22,7 @@ class NutanixParser():
     USER_VLAN = 'uesr_vlan'
     STORAGE = 'storage'
     SMTP = 'smtp'
+    INFOBOX = 'infoblox'
 
     GROUPED_HEADING = {
         'Cluster Configuration': CLUSTER_CONFIGURATION,
@@ -34,7 +35,11 @@ class NutanixParser():
         'User VM VLAN(s)': USER_VLAN,
     }
 
+    """
+        keys with names as key and 
+    """
     GROUPED_KEYS = {
+
         CLUSTER_CONFIGURATION: {
             'Location': 'location',
             'Cluster Name': 'cluster_name',
@@ -106,6 +111,7 @@ class NutanixParser():
             'PRISM Central Instance IP': 'prism_central_ip',
         }
     }
+
     parsed_data = {
         # Cluster Configuration
         'location': {
@@ -141,7 +147,7 @@ class NutanixParser():
             'group': CLUSTER_CONFIGURATION,
             'is_cluster_json': True,
             'is_to_playbook': True,
-            'value': '',
+            'value': None,
             'format_methods': ['format_filter_to_digits_only'],
         },
         'aos': {
@@ -424,6 +430,31 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': '',
         },
+        ### These variables need to be added from website
+        'infoblox_dev_service_account': {
+            'name': 'infoblox_dev_service_account',
+            'group': INFOBOX,
+            'is_to_playbook': True,
+            'value': 'SVC_ibx_d_RW',
+        },
+        'infoblox_prod_service_account': {
+            'name': 'infoblox_prod_service_account',
+            'group': INFOBOX,
+            'is_to_playbook': True,
+            'value': 'SVC_ibx_p_RW',
+        },
+        'infoblox_dev_server': {
+            'name': 'infoblox_dev_server',
+            'group': INFOBOX,
+            'is_to_playbook': True,
+            'value': '10.150.121.139',
+        },
+        'infoblox_prod_server': {
+            'name': 'infoblox_prod_server',
+            'group': INFOBOX,
+            'is_to_playbook': True,
+            'value': '10.130.121.9',
+        },
     }
     """
         hypervisor_iso - This sounds weird but it should be empty. Essentially, we need the JSON to read "hypervisor_iso": {}
@@ -507,6 +538,7 @@ class NutanixParser():
         :param to_group:
         :return:
         """
+        # default values
         DEFAULT_VALUES = {
             'image_now': True,
             'hypervisor': 'kvm',
@@ -661,21 +693,6 @@ class NutanixParser():
         return yml_dict
 
     def get_json_dict(self):
-        """
-            "current_cvm_vlan_tag": "102", - This value should come from the spreadsheet and is the same as "CVM/Hypervisor VLAN" in the spreadsheet
-            "hypervisor_nameserver": "10.95.21.44", - This should be the array of DNS servers
-            "hypervisor_password": "nutanix", - Just default this to nutanix, no need to pull anything from spreadsheet
-            "clusters": [{
-            "enable_ns": false,
-            "cluster_members": ["10.15.33.3","10.15.33.4"], This should be an array of the nodeX_hypervisor_ip fields
-            }]
-            "cluster_init_now": true, - Just default this to true, no need to pull anything from spreadsheet
-            "hypervisor_ntp_servers": "10.195.121.44" This should be the array of NTP servers
-            "tests": {
-            "run_syscheck": true, - Just default this to true, no need to pull anything from spreadsheet
-            "run_ncc": true - Just default this to true, no need to pull anything from spreadsheet
-            },
-        """
         default_values = {
             'hypervisor_password': 'nutanix',
             'tests': {
@@ -744,6 +761,7 @@ class NutanixParser():
             return changed_keys.get(key, key)
 
         cluster_config = {}
+
         for key, data in self.parsed_data.items():
             value = data.get('value')
             if value is not None and data.get('is_to_playbook'):

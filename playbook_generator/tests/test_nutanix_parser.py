@@ -1,5 +1,5 @@
 from django.conf import settings
-from playbook_generator.file_config_parsers import NutanixParser
+from playbook_generator.file_config_parsers import NutanixParser, VmWareParser
 from pathlib import Path
 from django.test import TestCase
 
@@ -50,11 +50,19 @@ class NutanixParserTestCases(TestCase):
                        'value': ['10.195.121.44', '10.198.121.44', '10.150.121.44']}}
 
 
-    def test_parser(self):
+    def test_nutanix_parser(self):
         fin_path = settings.BASE_DIR.joinpath('playbook_generator/tests/files/nutanix1.xlsx')
         parser = NutanixParser(file_path=fin_path)
         parser.parse_file()
         # parser.get_parsed_data()
         # parser.get_yml_dict()
-        parser.get_json_dict()
+        # print(parser.get_yml_dict())
         # self.assertDictEqual(self.parsed_data, parser.parsed_data)
+
+    def test_vm_ware_parser(self):
+        fin_path = settings.BASE_DIR.joinpath('playbook_generator/tests/files/vm_ware.xlsx')
+        parser = VmWareParser(file_path=fin_path)
+        parser.parse_file()
+        # parser.get_parsed_data()
+        print(parser.get_yml_dict())
+        # parser.get_json_dict()

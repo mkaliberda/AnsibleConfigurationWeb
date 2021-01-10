@@ -1,5 +1,6 @@
 from playbook_generator.models import PlaybookServiceTypes
 from .nutanix_parser import NutanixParser
+from .vmware_parser import VmWareParser
 
 
 class ParserFactory:
@@ -8,6 +9,7 @@ class ParserFactory:
     """
     PARSE_CLASSES = {
         PlaybookServiceTypes.NUTANIX.value: NutanixParser,
+        PlaybookServiceTypes.VMWARE.value: VmWareParser,
     }
 
     def __init__(self, event_type):

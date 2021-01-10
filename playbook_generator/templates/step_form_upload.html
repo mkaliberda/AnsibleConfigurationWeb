@@ -5,13 +5,13 @@
     <fieldset class="uk-fieldset">
       <legend class="uk-legend">Create new config</legend>
     </fieldset>
-    {% if 'vmware' in request.path  %}
-    <div class="uk-flex uk-flex-column uk-flex-center uk-flex-middle upload__form__container">
-      <div class="uk-margin uk-flex uk-flex-column">
-        <h3 class="color__heading"> Coming soon!</h3>
-      </div>
-    </div>
-    {% else %}
+{#    {% if 'vmware' in request.path  %}#}
+{#    <div class="uk-flex uk-flex-column uk-flex-center uk-flex-middle upload__form__container">#}
+{#      <div class="uk-margin uk-flex uk-flex-column">#}
+{#        <h3 class="color__heading"> Coming soon!</h3>#}
+{#      </div>#}
+{#    </div>#}
+{#    {% else %}#}
     <div class="uk-flex uk-flex-column uk-flex-center uk-flex-middle upload__form__container">
       <div class="uk-margin uk-flex uk-flex-column">
         <div class="uk-margin">
@@ -37,7 +37,7 @@
          </button>
       </div>
     </div>
-    {% endif %}
+
   </form>
 {% endblock %}
 {% block base_js %}
