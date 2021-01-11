@@ -106,7 +106,7 @@ class VmWareParser():
         'vcenter_address_hd': {
             'name': 'vcenter_address_hd',
             'group': HOST_DATA,
-            'is_to_playbook': True,
+            'is_to_playbook': False,
             'value': '',
         },
         'dns_server_1': {
@@ -121,6 +121,21 @@ class VmWareParser():
             'is_to_playbook': True,
             'value': '',
         },
+
+        'dns_server_array': {
+            'name': 'dns_server_array',
+            'group': HOST_DATA,
+            'is_to_playbook': True,
+            'value': ["{{ dns_server_1 }}", "{{ dns_server_2 }}"],
+        },
+
+        'ntp_server_array': {
+            'name': 'ntp_server_array',
+            'group': HOST_DATA,
+            'is_to_playbook': True,
+            'value': ["{{ dns_server_1 }}", "{{ dns_server_2 }}"],
+        },
+
         'vlan_vm_id_hd': {
             'name': 'vlan_vm_id_hd',
             'group': HOST_DATA,
@@ -138,7 +153,9 @@ class VmWareParser():
             'group': VLAN_DATA,
             'is_to_playbook': True,
             'value': '',
+            'format_methods': ['format_vlan_id', 'format_filter_to_digits_only'],
         },
+
         ### These variables need to be added from website
         'infoblox_dev_service_account': {
             'name': 'infoblox_dev_service_account',
