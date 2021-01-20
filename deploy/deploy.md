@@ -64,11 +64,11 @@ cd to the project folder
 
 ``chmod 777 /srv/static_root``
 
-``python manage.py sass static/styles/scss/ static/styles/css/`` # for compile stlyes
+``python manage.py sass static/styles/scss/ static/styles/css/`` # to compile stlyes
 
-``python manage.py collectstatic`` # for move static files to the static root
+``python manage.py collectstatic`` # to move static files to the static root
 
-``python manage.py migrate`` for create tables at the database
+``python manage.py migrate`` to create tables in the database
 
 ##gunicorn and supervisor
 
@@ -90,7 +90,7 @@ at the ``/etc/supervisord.d/`` create file ``ansible-web.ini`` following templat
  
 ##nginx
 
-at the ``/etc/nginx/conf.d/`` create file ``*.conf`` following template [deploy/nginx.conf](./nginx.conf)
+at ``/etc/nginx/conf.d/`` create file ``*.conf`` following template [deploy/nginx.conf](./nginx.conf)
 
 **IMPORTANT**
  
