@@ -1,6 +1,6 @@
-# AnsibleConfigurationWeb
+# VMClusterAutomation-WebFrontEnd
 
-#### For the deploy please take a look [how to deploy](./deploy/deploy.md)
+#### To deploy please look at [how to deploy](./deploy/deploy.md)
 #### for local use
 if use are using ``python-virtualen``:
  
