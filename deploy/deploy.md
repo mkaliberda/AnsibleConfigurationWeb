@@ -4,7 +4,7 @@ clone this project into `srv/folder`
 
 Rename env_example to .env ``mv env_example .env``
 
-## Install Dependencies:
+## Install Dependencies
 
 ``yum install -y python3``
 
