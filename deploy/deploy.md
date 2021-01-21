@@ -40,13 +40,17 @@ host all all ::1/128 md5 <br>
 
 ``su postgres``
 
-``psql -d template1 -c "ALTER USER postgres WITH PASSWORD 'PASSWORD';"``
+``psql``
 
-``createuser web_app``
+``CREATE USER web_app;``
 
-``createdb web_prod_db --owner web_app``
+``CREATE DATABASE web_prod_db;``
 
-``psql -d template1 -c "ALTER USER web_app WITH PASSWORD 'PASSWORD';"``
+``ALTER USER postgres WITH PASSWORD 'PASSWORD';``
+
+``ALTER USER web_app WITH PASSWORD 'PASSWORD';``
+
+``ALTER DATABASE web_prod_db OWNER TO web_app;``
 
 ``exit``
 
