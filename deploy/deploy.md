@@ -1,10 +1,10 @@
-###Manual deploy to AWS instance CentOS
+## Code Deployment
 
 clone this project into `srv/folder`
 
-``mv env_example .env`` please check information inside
+Rename env_example to .env ``mv env_example .env``
 
-## install dev dependensies:
+## Install Dependencies
 
 ``yum install -y python3``
 
@@ -14,7 +14,7 @@ clone this project into `srv/folder`
 
 ``sudo yum -y install nginx``
 
-## Postgresql
+## Postgresql Install
 
 ```sudo yum install postgresql-server postgresql-contrib```
 
@@ -34,21 +34,27 @@ local all all peer <br>
 host all all 127.0.0.1/32 md5 <br>
 host all all ::1/128 md5 <br>
 
-create db
- 
+## Create Postgres DB & User
+
 ```sudo passwd postgres```
 
-``psql -d template1 -c "ALTER USER postgres WITH PASSWORD 'PASSWORD';"``
+``su postgres``
 
-``createuser web_app``
+``psql``
 
-``psql -d template1 -c "ALTER USER web_app WITH PASSWORD 'PASSWORD';"``
+``CREATE USER web_app;``
 
-``createdb web_prod_db --owner web_app``
+``CREATE DATABASE web_prod_db;``
+
+``ALTER USER postgres WITH PASSWORD 'PASSWORD';``
+
+``ALTER USER web_app WITH PASSWORD 'PASSWORD';``
+
+``ALTER DATABASE web_prod_db OWNER TO web_app;``
 
 ``exit``
 
-##Python Virtualenv
+## Setup Python Virtualenv
 
 ``sudo apt-get -y install python-virtualenv``
 
@@ -64,13 +70,13 @@ cd to the project folder
 
 ``chmod 777 /srv/static_root``
 
-``python manage.py sass static/styles/scss/ static/styles/css/`` # for compile stlyes
+``python manage.py sass static/styles/scss/ static/styles/css/`` # to compile stlyes
 
-``python manage.py collectstatic`` # for move static files to the static root
+``python manage.py collectstatic`` # to move static files to the static root
 
-``python manage.py migrate`` for create tables at the database
+``python manage.py migrate`` to create tables in the database
 
-##gunicorn and supervisor
+## Setup gunicorn and supervisor
 
 create empty folder to store socket file
 ``mkdir ./venv/run``
@@ -88,9 +94,9 @@ at the ``/etc/supervisord.d/`` create file ``ansible-web.ini`` following templat
 ``sudo supervisorctl restart ansible-web`` to restart task
 
  
-##nginx
+## Setup nginx
 
-at the ``/etc/nginx/conf.d/`` create file ``*.conf`` following template [deploy/nginx.conf](./nginx.conf)
+at ``/etc/nginx/conf.d/`` create file ``*.conf`` following template [deploy/nginx.conf](./nginx.conf)
 
 **IMPORTANT**
  
