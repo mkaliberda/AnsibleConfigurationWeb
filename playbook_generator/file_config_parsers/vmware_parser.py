@@ -3,6 +3,7 @@ import os
 import xlrd
 import itertools
 import re
+from playbook_generator.models import StaticVarsValue, PlaybookServiceTypes
 
 
 GROUPED_HEADING = {
@@ -15,6 +16,7 @@ class VmWareParser():
     HOST_DATA = 'host_data'
     ILO_DATA = 'user_data'
     VLAN_DATA = 'Network Label'
+    STATIC = 'static'
 
     GROUPED_HEADING = {
         'Hostname': HOST_DATA,
@@ -76,13 +78,6 @@ class VmWareParser():
             'is_to_playbook': True,
             'value': '',
         },
-
-        # 'ilo_name': {
-        #     'name': 'ilo_name',
-        #     'group': ILO_DATA,
-        #     'is_to_playbook': False,
-        #     'value': '',
-        # },
 
         'esxi_host_ilo_ip': {
             'name': 'esxi_host_ilo_ip',
@@ -155,32 +150,6 @@ class VmWareParser():
             'value': '',
             'format_methods': ['format_vlan_id', 'format_filter_to_digits_only'],
         },
-
-        ### These variables need to be added from website
-        'infoblox_dev_service_account': {
-            'name': 'infoblox_dev_service_account',
-            'group': VLAN_DATA,
-            'is_to_playbook': True,
-            'value': 'SVC_ibx_d_RW',
-        },
-        'infoblox_prod_service_account': {
-            'name': 'infoblox_prod_service_account',
-            'group': VLAN_DATA,
-            'is_to_playbook': True,
-            'value': 'SVC_ibx_p_RW',
-        },
-        'infoblox_dev_server': {
-            'name': 'infoblox_dev_server',
-            'group': VLAN_DATA,
-            'is_to_playbook': True,
-            'value': '10.150.121.139',
-        },
-        'infoblox_prod_server': {
-            'name': 'infoblox_prod_server',
-            'group': VLAN_DATA,
-            'is_to_playbook': True,
-            'value': '10.130.121.9',
-        },
     }
 
     def __init__(self, file_contents=None, file_path=None, index_sheet=0):
@@ -189,6 +158,17 @@ class VmWareParser():
         else:
             self.__wbook = xlrd.open_workbook(filename=file_path)
         self.sheet = self.__wbook.sheet_by_index(index_sheet)
+        st = StaticVarsValue.objects.filter(service_type=PlaybookServiceTypes.VMWARE.value)
+        for conf in st:
+            self.parsed_data.update({
+                conf.key : {
+                    'name': conf.key,
+                    'group': self.STATIC,
+                    'is_cluster_json': True,
+                    'is_to_playbook': True,
+                    'value': conf.value,
+               }
+            })
 
     def get_grouped_heading(self, row_value):
         return self.GROUPED_HEADING.get(row_value)

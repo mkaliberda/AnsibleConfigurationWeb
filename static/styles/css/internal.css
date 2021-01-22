@@ -80,6 +80,18 @@
   font-size: 0.9rem;
 }
 
+.static-config__form {
+  width: 80%;
+}
+
+.static-config__form #form_set {
+  width: 100%;
+}
+
+.static-config__form .btn__wrapper {
+  width: 100%;
+}
+
 textarea.terminal {
   outline: 0;
   background: #1a1a1a;

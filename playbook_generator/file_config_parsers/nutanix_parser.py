@@ -3,7 +3,7 @@ import os
 import xlrd
 import itertools
 import re
-
+from playbook_generator.models import StaticVarsValue, PlaybookServiceTypes
 
 GROUPED_HEADING = {
     'Cluster Configuration': 'cluster_configuration',
@@ -23,6 +23,7 @@ class NutanixParser():
     STORAGE = 'storage'
     SMTP = 'smtp'
     INFOBOX = 'infoblox'
+    STATIC = 'static'
 
     GROUPED_HEADING = {
         'Cluster Configuration': CLUSTER_CONFIGURATION,
@@ -164,33 +165,12 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': {},
         },
-        'skip_hypervisor': {
-            'name': 'Skip Hypervisor',
-            'group': CLUSTER_CONFIGURATION,
-            'is_cluster_json': False,
-            'is_to_playbook': True,
-            'value': False,
-        },
         'hypervisor_version': {
             'name': 'Hypervisor Version & Build',
             'group': CLUSTER_CONFIGURATION,
             'is_cluster_json': False,
             'is_to_playbook': False,
             'value': '',
-        },
-        'nos_package': {
-            'name': 'Nos Package',
-            'group': CLUSTER_CONFIGURATION,
-            'is_cluster_json': False,
-            'is_to_playbook': True,
-            'value': '/home/nutanix/foundation/nos/nutanix_installer_package-release-euphrates-5.15.3-stable-x86_64.tar.gz',
-        },
-        'is_imaging': {
-            'name': '',
-            'group': CLUSTER_CONFIGURATION,
-            'is_cluster_json': False,
-            'is_to_playbook': True,
-            'value': True,
         },
         'witness_appliance_version': {
             'name': 'Nutanix Witness Appliance Version',
@@ -461,7 +441,6 @@ class NutanixParser():
         skip_hypervisor - Please default to false and don't pull anything from excel
         nos_package - please default to the value and don't pull anything from excel
         is_imaging - default to true and don't pull anything from excel
-        timezone - This can be removed entirely as it's no longer needed
         cluster_init_successful - default to true and don't pull anything from excel
         node1_image_now - default to true and don't pull anything from excel
         node1_hypervisor - please default to kvm and don't pull anything from excel
@@ -479,6 +458,19 @@ class NutanixParser():
         else:
             self.__wbook = xlrd.open_workbook(filename=file_path)
         self.sheet = self.__wbook.sheet_by_index(index_sheet)
+        # add static vars
+        st = StaticVarsValue.objects.filter(service_type=PlaybookServiceTypes.NUTANIX.value)
+        for conf in st:
+            self.parsed_data.update({
+                conf.key : {
+                    'name': conf.key,
+                    'group': self.STATIC,
+                    'is_cluster_json': True,
+                    'is_to_playbook': True,
+                    'value': conf.value,
+               }
+            })
+
 
     def get_grouped_heading(self, row_value):
         return self.GROUPED_HEADING.get(row_value)

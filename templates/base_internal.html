@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block base_html %}
   <nav class="uk-navbar-container uk-margin-medium-bottom uk-navbar-transparent" uk-navbar>
     <div class="uk-navbar-left">
@@ -32,6 +31,13 @@
                 Run new playbook
               </a>
             </li>
+            <li>
+              <a href="{% url 'playbook_generator:playbook_static_vars_form' service_type='nutanix' %}"
+                 class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
+              >
+                Static vars
+              </a>
+            </li>
           </ul>
         </li>
         <li class="uk-parent {% if 'vmware' in request.path  %} uk-open {% endif %}">
@@ -44,6 +50,13 @@
                  class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
               >
                 Run new playbook
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'playbook_generator:playbook_static_vars_form' service_type='vmware' %}"
+                 class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
+              >
+                Static vars
               </a>
             </li>
           </ul>

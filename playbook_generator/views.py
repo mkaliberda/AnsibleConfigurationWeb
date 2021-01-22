@@ -1,6 +1,7 @@
 import yaml
 import json
 
+from django.forms import formset_factory, modelformset_factory
 from django.conf import settings
 from django.utils import timezone
 from django.core.files.base import ContentFile
@@ -9,8 +10,8 @@ from django.urls import reverse
 from django.views import generic
 
 from playbook_generator.file_config_parsers import ParserFactory
-from playbook_generator.forms import FileUploadVarsPlaybookForm, PlaybookModeForm
-from playbook_generator.models import PlaybookServiceTypes
+from playbook_generator.forms import FileUploadVarsPlaybookForm, PlaybookModeForm, StaticVarsValueModelForm
+from playbook_generator.models import PlaybookServiceTypes, StaticVarsValue
 from playbook_generator.models import ConfigUpload
 
 
@@ -122,11 +123,53 @@ class PlaybookInstructionStepViewForm(generic.TemplateView):
     template_name = 'step_instruction.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.nodes_path = settings.STATIC_NODES_CONFIG_PATH
+
         self.uploaded_config = get_object_or_404(ConfigUpload,
                                                  uuid=kwargs.get("config_uuid"))
+        self.nodes_path = settings.CONFIGS_PATH.get(kwargs.get('service_type')).get(self.uploaded_config.tag)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs.update({ 'uploaded_config': self.uploaded_config, 'nodes_path': self.nodes_path })
         return super().get_context_data(**kwargs)
+
+
+class PlaybookStaticVarsForm(generic.FormView):
+    template_name = 'static_vars_form.html'
+    form_class = modelformset_factory(StaticVarsValue, fields=('key', 'value',), can_delete=True)
+
+    def get_success_url(self):
+        return reverse(
+            'playbook_generator:playbook_static_vars_form',
+            kwargs={'service_type': self.kwargs.get('service_type')}
+        )
+
+
+    def get_form(self, form_class=None):
+        super().get_form()
+        formset = self.get_form_class()
+        return formset(queryset=StaticVarsValue.objects.filter(service_type=self.kwargs.get('service_type')))
+
+    def post(self, request, *args, **kwargs):
+        formset = self.get_form_class()
+        forms = formset(request.POST)
+        for form in forms:
+            if form.is_valid():
+                if form.cleaned_data.get('key') and form.cleaned_data.get('value'):
+                    if form.cleaned_data.get('DELETE') and form.cleaned_data.get('id'):
+                        StaticVarsValue.objects.filter(
+                            id=form.cleaned_data.get('id').id,
+                            service_type=self.kwargs.get('service_type')
+                        ).delete()
+                    elif form.cleaned_data.get('id'):
+                        StaticVarsValue.objects.update_or_create(
+                            id=form.cleaned_data.get('id').id,
+                            defaults={'value': form.cleaned_data.get('value'), 'key': form.cleaned_data.get('key')}
+                        )
+                    else:
+                        StaticVarsValue.objects.update_or_create(
+                            key=form.cleaned_data.get('key'),
+                            service_type=self.kwargs.get('service_type'),
+                            defaults={ 'value': form.cleaned_data.get('value') }
+                        )
+        return redirect(to=self.get_success_url())

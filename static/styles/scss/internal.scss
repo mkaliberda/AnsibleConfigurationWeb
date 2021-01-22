@@ -76,6 +76,16 @@
   }
 }
 
+.static-config__form {
+  width: 80%;
+  #form_set {
+    width: 100%;
+  }
+  .btn__wrapper {
+    width: 100%;
+  }
+}
+
 textarea.terminal {
   outline: 0;
   background: #1a1a1a;

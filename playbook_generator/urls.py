@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.urls import path, include
 from playbook_generator.views import (PlaybookHomeView, PlaybookSelectTagViewForm, PlaybookUploadStepViewForm,
-                                      PlaybookReviewStepViewForm, PlaybookInstructionStepViewForm)
+                                      PlaybookReviewStepViewForm, PlaybookInstructionStepViewForm, PlaybookStaticVarsForm)
 
 
 urlpatterns = [
@@ -28,4 +28,6 @@ urlpatterns = [
          PlaybookReviewStepViewForm.as_view(), name='playbook_step_review'),
     path('playbook-form/<str:service_type>/step/instruction/<uuid:config_uuid>/',
          PlaybookInstructionStepViewForm.as_view(), name='playbook_step_instruction'),
+    path('playbook-static-vars-form/<str:service_type>/',
+             PlaybookStaticVarsForm.as_view(), name='playbook_static_vars_form'),
 ]

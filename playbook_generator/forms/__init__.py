@@ -1,2 +1,3 @@
 from .playbook_upload_vars import FileUploadVarsPlaybookForm
 from .playbook_mode import PlaybookModeForm
+from .static_varsl import StaticVarsValueModelForm

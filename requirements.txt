@@ -2,10 +2,10 @@ asgiref==3.3.1
 Django==3.1.3
 django-environ==0.4.5
 django-sass==1.0.0
+gunicorn==20.0.4
 jsonfield==3.1.0
 libsass==0.20.1
-numpy==1.19.4
-pandas==1.1.4
+psycopg2-binary==2.8.6
 python-dateutil==2.8.1
 pytz==2020.4
 PyYAML==5.3.1

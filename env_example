@@ -1,5 +1,15 @@
-STATIC_NODES_CONFIG_PATH=/home/jweier/Repo/infrastructureascode-1/ntx2node.yml
-PATH_UPLOAD_CONFIGS=./uploads
+
+NUTANIX_DEPLOY_PLAYBOOK_PATH=/foo/bar/nutanixdeploy.yml
+NUTANIX_AUDIT_PLAYBOOK_PATH=/foo/bar/nutanixauditcustomize.yml
+NUTANIX_CUSTOMIZE_PLAYBOOK_PATH=/foo/bar/nutanixauditcustomize.yml
+
+VMWARE_DEPLOY_PLAYBOOK_PATH=/foo/bar/esxi.yml
+VMWARE_AUDIT_PLAYBOOK_PATH=/foo/bar/esxi.yml
+VMWARE_CUSTOMIZE_PLAYBOOK_PATH=/foo/bar/esxi.yml
+
+PATH_UPLOAD_CONFIGS=./upload
+
+
 IS_PROD=True
 DATABASES_NAME= #database name
 DATABASES_USER= #database user

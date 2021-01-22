@@ -40,6 +40,8 @@ INSTALLED_APPS = [
 
     'django_sass',
     'jsonfield',
+    'jquery',
+    'djangoformsetjs',
 
     'playbook_generator',
 ]
@@ -145,5 +147,24 @@ MEDIA_URL = '/uploads/'
 
 MEDIA_ROOT = PATH_UPLOAD_CONFIGS
 
-STATIC_NODES_CONFIG_PATH = env('STATIC_NODES_CONFIG_PATH', default='/home/jweier/Repo/infrastructureascode-1/ntx2node.yml')
+NUTANIX_DEPLOY_PLAYBOOK_PATH = env('NUTANIX_DEPLOY_PLAYBOOK_PATH', default='')
+NUTANIX_AUDIT_PLAYBOOK_PATH = env('NUTANIX_AUDIT_PLAYBOOK_PATH', default='')
+NUTANIX_CUSTOMIZE_PLAYBOOK_PATH = env('NUTANIX_CUSTOMIZE_PLAYBOOK_PATH', default='')
 
+VMWARE_DEPLOY_PLAYBOOK_PATH = env('VMWARE_DEPLOY_PLAYBOOK_PATH', default='')
+VMWARE_AUDIT_PLAYBOOK_PATH = env('VMWARE_AUDIT_PLAYBOOK_PATH', default='')
+VMWARE_CUSTOMIZE_PLAYBOOK_PATH = env('VMWARE_CUSTOMIZE_PLAYBOOK_PATH', default='')
+
+
+CONFIGS_PATH = {
+    'nutanix': {
+        'deploy': NUTANIX_DEPLOY_PLAYBOOK_PATH,
+        'audit': NUTANIX_AUDIT_PLAYBOOK_PATH,
+        'customize': NUTANIX_CUSTOMIZE_PLAYBOOK_PATH,
+    },
+    'vmware': {
+        'deploy': VMWARE_DEPLOY_PLAYBOOK_PATH,
+        'audit': VMWARE_AUDIT_PLAYBOOK_PATH,
+        'customize': VMWARE_CUSTOMIZE_PLAYBOOK_PATH,
+    },
+}
