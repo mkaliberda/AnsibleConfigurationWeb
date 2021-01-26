@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django_sass',
     'jsonfield',
     'jquery',
-    'djangoformsetjs',
 
     'playbook_generator',
 ]
