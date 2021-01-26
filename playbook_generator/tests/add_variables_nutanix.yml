@@ -1,0 +1,49 @@
+### These variables need to be added from website
+infoblox_dev_service_account: "SVC_ibx_d_RW"
+infoblox_prod_service_account: "SVC_ibx_p_RW"
+infoblox_dev_server: "10.150.121.139"
+infoblox_prod_server: "10.130.121.9"
+
+banner_checksum: "d0401eea405d24f12492e0213fa6944d0c2c376f",
+ncli_path: "/home/nutanix/prism/cli/ncli",
+prism_central_ip: "10.195.54.85",
+prism_central_username: "ntx_adm",
+syslog_ip: "10.195.55.56",
+
+syslog_port: "514"
+syslog_protocol: "TCP"
+ovs_br0: br0
+ovs_br0_nic0: eth0
+ovs_br0_nic1: eth1
+ovs_bond_mode: "active-backup"
+alerts_config_status: "Enabled"
+alerts_config_email_digest: true
+alerts_config_enable_nutanix: true
+cvm_cluster_server_port: 9440
+snmp_server_1: "172.30.201.40"
+snmp_server_2: "172.30.201.65"
+snmp_server_array: ["{{ snmp_server_1 }}", "{{ snmp_server_2 }}"]
+directory_url: "ldaps://usnusgadnap04.na.imtn.com:3269"
+directory_domain: "na.imtn.com"
+directory_name: "IMTN"
+directory_service_account_username: "svc_nutanix"
+ahv_hardening_aide: true
+ahv_hardening_password: true
+ahv_hardening_schedule: "hourly"
+ahv_hardening_banner: true
+ahv_hardening_core: false
+cvm_hardening_aide: true
+cvm_hardening_password: true
+cvm_hardening_schedule: "hourly"
+cvm_hardening_banner: true
+cvm_hardening_core: false
+ha_enabled: true
+ha_num_host_failures_to_tolerate: 1
+ha_reservation_type: "ReserveSegments"
+ha_state: "HighlyAvailable"
+role_desired_role: "ROLE_USER_ADMIN"
+role_entityType: "USER"
+role_entityValues: "PRISM-GLB-IM-ADM"
+foundation_server_ip: "10.195.54.77"
+foundation_server_port: 8000
+thycotic_service_account: "svc_sssyseng"

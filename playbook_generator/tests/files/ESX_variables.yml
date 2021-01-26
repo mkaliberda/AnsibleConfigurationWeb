@@ -1,0 +1,27 @@
+# All variables needed for the Vestby environment
+
+esxi_host_name: "vst-esx-crp-c01-n01"
+esxi_host_mgmt_ip: "10.22.20.100"
+esxi_host_mgmt_subnet: "255.255.255.224"
+esxi_host_mgmt_gw: "10.22.20.97"
+
+esxi_host_ilo_ip: "10.22.20.41"
+esxi_host_ilo_username: "Administrator"
+esxi_host_ilo_pw: "MVFDS3ds2M"
+
+vcenter_address: "OKVCTR.na.imtn.com"
+
+dns_server_1: "10.95.121.44"
+dns_server_2: 10.98.121.44"
+dns_server_array: ["{{ dns_server_1 }}", "{{ dns_server_2 }}"]
+
+ntp_server_array: ["{{ dns_server_1 }}", "{{ dns_server_2 }}"]
+
+vlan_vm_name: "VLAN 100 - Vestby DMS App Tier"
+vlan_vm_id: "100"
+
+#Static variables from website
+infoblox_dev_service_account: "SVC_ibx_d_RW"
+infoblox_prod_service_account: "SVC_ibx_p_RW"
+infoblox_dev_server: "10.150.121.139"
+infoblox_prod_server: "10.130.121.9"
