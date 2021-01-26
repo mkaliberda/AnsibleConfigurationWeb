@@ -1,0 +1,9 @@
+#!/bin/bash
+APP_PATH=/srv/static_root/vmclusterautomation-webfrontend
+
+yes | $APP_PATH/venv/bin/python manage.py migrate
+yes | $APP_PATH/venv/bin/python manage.py collectstatic
+yes | $APP_PATH/venv/bin/pip install -r requirements.txt
+
+supervisorctl restart ansible-web
+
