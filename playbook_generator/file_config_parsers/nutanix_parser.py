@@ -165,12 +165,33 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': {},
         },
+        'skip_hypervisor': {
+            'name': 'Skip Hypervisor',
+            'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
+            'is_to_playbook': True,
+            'value': False,
+        },
         'hypervisor_version': {
             'name': 'Hypervisor Version & Build',
             'group': CLUSTER_CONFIGURATION,
             'is_cluster_json': False,
             'is_to_playbook': False,
             'value': '',
+        },
+        'nos_package': {
+            'name': 'Nos Package',
+            'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
+            'is_to_playbook': True,
+            'value': '/home/nutanix/foundation/nos/nutanix_installer_package-release-euphrates-5.15.3-stable-x86_64.tar.gz',
+        },
+        'is_imaging': {
+            'name': '',
+            'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
+            'is_to_playbook': True,
+            'value': True,
         },
         'witness_appliance_version': {
             'name': 'Nutanix Witness Appliance Version',
@@ -410,37 +431,39 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': '',
         },
+
         ### These variables need to be added from website
-        'infoblox_dev_service_account': {
-            'name': 'infoblox_dev_service_account',
-            'group': INFOBOX,
-            'is_to_playbook': True,
-            'value': 'SVC_ibx_d_RW',
-        },
-        'infoblox_prod_service_account': {
-            'name': 'infoblox_prod_service_account',
-            'group': INFOBOX,
-            'is_to_playbook': True,
-            'value': 'SVC_ibx_p_RW',
-        },
-        'infoblox_dev_server': {
-            'name': 'infoblox_dev_server',
-            'group': INFOBOX,
-            'is_to_playbook': True,
-            'value': '10.150.121.139',
-        },
-        'infoblox_prod_server': {
-            'name': 'infoblox_prod_server',
-            'group': INFOBOX,
-            'is_to_playbook': True,
-            'value': '10.130.121.9',
-        },
+        # 'infoblox_dev_service_account': {
+        #     'name': 'infoblox_dev_service_account',
+        #     'group': INFOBOX,
+        #     'is_to_playbook': True,
+        #     'value': 'SVC_ibx_d_RW',
+        # },
+        # 'infoblox_prod_service_account': {
+        #     'name': 'infoblox_prod_service_account',
+        #     'group': INFOBOX,
+        #     'is_to_playbook': True,
+        #     'value': 'SVC_ibx_p_RW',
+        # },
+        # 'infoblox_dev_server': {
+        #     'name': 'infoblox_dev_server',
+        #     'group': INFOBOX,
+        #     'is_to_playbook': True,
+        #     'value': '10.150.121.139',
+        # },
+        # 'infoblox_prod_server': {
+        #     'name': 'infoblox_prod_server',
+        #     'group': INFOBOX,
+        #     'is_to_playbook': True,
+        #     'value': '10.130.121.9',
+        # },
     }
     """
         hypervisor_iso - This sounds weird but it should be empty. Essentially, we need the JSON to read "hypervisor_iso": {}
         skip_hypervisor - Please default to false and don't pull anything from excel
         nos_package - please default to the value and don't pull anything from excel
         is_imaging - default to true and don't pull anything from excel
+        timezone - This can be removed entirely as it's no longer needed
         cluster_init_successful - default to true and don't pull anything from excel
         node1_image_now - default to true and don't pull anything from excel
         node1_hypervisor - please default to kvm and don't pull anything from excel
