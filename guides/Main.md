@@ -114,7 +114,7 @@ templates may inherit others templates
 
 ---
 
-**playbook_generator** - application witch controls whole process for generation configs
+**playbook_generator** - application witch controls whole process for generating configs
 
 with `urls.py` easy to understand for which pages using specifically ``Views``, each view has information about template usually it's ``template_name =`` 
 
