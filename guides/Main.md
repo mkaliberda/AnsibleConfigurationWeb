@@ -6,7 +6,7 @@ Django has application structure
 
 [application docs](https://docs.djangoproject.com/en/3.1/ref/applications/)
 
-each application can contain:
+each application may contain:
 * `models` - class based representation of database tables
 * `migrations` - history of models changes
 * `test` - unit tests
