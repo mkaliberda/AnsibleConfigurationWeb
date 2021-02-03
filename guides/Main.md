@@ -28,7 +28,7 @@ example:
 ```python 
 path('playbook-form/<str:service_type>/step/upload/', PlaybookUploadStepViewForm.as_view(), name='playbook_step_upload'),
 
-'playbook-form/<str:service_type>/step/upload/' # path
+'playbook-form/<str:service_type>/step/upload/' # path where service_type is string parameter
 PlaybookUploadStepViewForm.as_view() # view
 name='playbook_step_upload' # name for referance in application
 
