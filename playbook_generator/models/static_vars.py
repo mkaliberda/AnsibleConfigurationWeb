@@ -8,7 +8,7 @@ fs = FileSystemStorage(location=settings.PATH_UPLOAD_CONFIGS)
 
 
 class StaticVarsFile(BaseModel):
-    config_yaml_file = models.FileField(upload_to='./static_vars_yaml', blank=True, null=True)
+    config_yaml_file = models.FileField( blank=True, null=True)
     tag = models.CharField(choices=PlaybookServiceTypes.choices(), max_length=64, blank=True, null=True)
 
 

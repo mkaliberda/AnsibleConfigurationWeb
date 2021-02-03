@@ -111,9 +111,7 @@ class PlaybookReviewStepViewForm(generic.TemplateView):
             'ipmi_user', 'ipmi_password', 'asset_tag', 'image_now', 'hypervisor', 'ipmi_configure_now', 'is_bare_metal',
             'vlan_ipmi_name', 'pulse_enabled', 'pulse_email_contact',
             'smtp_address', 'smtp_protocol', 'smtp_port', 'smtp_username', 'smtp_password', 'smtp_security_mode',
-            'smtp_address_to', 'smtp_address_from', 'prism_central_ip', 'hypervisor_ip', 'cvm_ip',
-
-            'vlan_vm_id_hd'
+            'smtp_address_to', 'smtp_address_from', 'prism_central_ip', 'hypervisor_ip', 'cvm_ip', 'vlan_vm_id_hd'
         ]
         kwargs.update({ 'uploaded_config': self.uploaded_config, 'not_display_key': not_display_key })
         return super().get_context_data(**kwargs)
