@@ -431,32 +431,6 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': '',
         },
-
-        ### These variables need to be added from website
-        # 'infoblox_dev_service_account': {
-        #     'name': 'infoblox_dev_service_account',
-        #     'group': INFOBOX,
-        #     'is_to_playbook': True,
-        #     'value': 'SVC_ibx_d_RW',
-        # },
-        # 'infoblox_prod_service_account': {
-        #     'name': 'infoblox_prod_service_account',
-        #     'group': INFOBOX,
-        #     'is_to_playbook': True,
-        #     'value': 'SVC_ibx_p_RW',
-        # },
-        # 'infoblox_dev_server': {
-        #     'name': 'infoblox_dev_server',
-        #     'group': INFOBOX,
-        #     'is_to_playbook': True,
-        #     'value': '10.150.121.139',
-        # },
-        # 'infoblox_prod_server': {
-        #     'name': 'infoblox_prod_server',
-        #     'group': INFOBOX,
-        #     'is_to_playbook': True,
-        #     'value': '10.130.121.9',
-        # },
     }
     """
         hypervisor_iso - This sounds weird but it should be empty. Essentially, we need the JSON to read "hypervisor_iso": {}

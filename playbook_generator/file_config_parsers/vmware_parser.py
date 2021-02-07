@@ -16,25 +16,32 @@ class VmWareParser():
     HOST_DATA = 'host_data'
     ILO_DATA = 'user_data'
     VLAN_DATA = 'Network Label'
+    SYSLOG_SERVER_DATA = 'Syslog Server'
     STATIC = 'static'
+    NTP_SERVER = 'ntp_server'
+    SNMP_DATA = 'snmp_data'
 
     GROUPED_HEADING = {
         'Hostname': HOST_DATA,
         'iLO Name': ILO_DATA,
         'Network Label': VLAN_DATA,
+        'Syslog Server': SYSLOG_SERVER_DATA,
+        'NTP Server 1': NTP_SERVER,
+        'SNMP Server 1': SNMP_DATA,
     }
 
     GROUPED_KEYS = {
-        HOST_DATA: {
+        HOST_DATA : {
             'Hostname': 'esxi_host_name',
-            'VLAN': 'vlan_vm_id_hd',
+            'VLAN': 'esxi_host_mgmt_vlan_id',
             'IP address': 'esxi_host_mgmt_ip',
             'Subnet Mask': 'esxi_host_mgmt_subnet',
             'Gateway': 'esxi_host_mgmt_gw',
             'Preferred DNS': 'dns_server_1',
             'Alternate DNS': 'dns_server_2',
-            'VCENTER': 'vcenter_address_hd',
-            'Datacenter': 'vlan_vm_name',
+            'VCENTER': 'vcenter_address',
+            'DataCenter Folder': 'country',
+            'Datacenter': 'dc_name',
         },
         ILO_DATA: {
             # 'iLO Name': 'ilo_name',
@@ -42,9 +49,24 @@ class VmWareParser():
             'Username': 'esxi_host_ilo_username',
             'Password': 'esxi_host_ilo_pw',
         },
+        SYSLOG_SERVER_DATA: {
+            'Syslog Server': 'syslog_hostname',
+            'Syslog IP': 'syslog_ip',
+        },
         VLAN_DATA: {
             'Network Label': 'vlan_vm_name',
             'VLAN ID': 'vlan_vm_id',
+        },
+        NTP_SERVER: {
+            'NTP Server 1': 'ntp_server_1',
+            'NTP Server 2': 'ntp_server_2',
+        },
+
+        SNMP_DATA: {
+            'SNMP Server 1': 'snmp_server_1',
+            'SNMP Server 2': 'snmp_server_2',
+            'SNMP Community': 'snmp_community',
+            'SNMP Port': 'snmp_port',
         }
     }
 
@@ -60,6 +82,7 @@ class VmWareParser():
             'value': '',
             'format_methods': ['format_host_name', ],
         },
+
         'esxi_host_mgmt_ip': {
             'name': 'esxi_host_mgmt_ip',
             'group': HOST_DATA,
@@ -72,11 +95,20 @@ class VmWareParser():
             'is_to_playbook': True,
             'value': '',
         },
+
         'esxi_host_mgmt_gw': {
             'name': 'esxi_host_mgmt_gw',
             'group': HOST_DATA,
             'is_to_playbook': True,
             'value': '',
+        },
+
+        'esxi_host_mgmt_vlan_id': {
+            'name': 'esxi_host_mgmt_vlan_id',
+            'group': HOST_DATA,
+            'is_to_playbook': True,
+            'value': '',
+            'format_methods': ['format_vlan_id', 'format_filter_to_digits_only'],
         },
 
         'esxi_host_ilo_ip': {
@@ -91,6 +123,7 @@ class VmWareParser():
             'is_to_playbook': True,
             'value': '',
         },
+
         'esxi_host_ilo_pw': {
             'name': 'esxi_host_ilo_pw',
             'group': ILO_DATA,
@@ -98,12 +131,34 @@ class VmWareParser():
             'value': '',
         },
 
-        'vcenter_address_hd': {
-            'name': 'vcenter_address_hd',
+        # default values HOST_DATA
+        'datastore_name': {
+            'is_default': True,
+            'name': 'datastore_name',
             'group': HOST_DATA,
-            'is_to_playbook': False,
+            'is_to_playbook': True,
+            'value': '{{ esxi_host_name }}-local',
+        },
+
+        'vcenter_address': {
+            'name': 'vcenter_address',
+            'group': HOST_DATA,
+            'is_to_playbook': True,
             'value': '',
         },
+        'country': {
+            'name': 'country',
+            'group': HOST_DATA,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'dc_name': {
+            'name': 'dc_name',
+            'group': HOST_DATA,
+            'is_to_playbook': True,
+            'value': '',
+        },
+
         'dns_server_1': {
             'name': 'dns_server_1',
             'group': HOST_DATA,
@@ -124,19 +179,69 @@ class VmWareParser():
             'value': ["{{ dns_server_1 }}", "{{ dns_server_2 }}"],
         },
 
+        # NTP Server
+        'ntp_server_1': {
+            'name': 'NTP Server 1',
+            'group': NTP_SERVER,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'ntp_server_2': {
+            'name': 'NTP Server 2',
+            'group': NTP_SERVER,
+            'is_to_playbook': True,
+            'value': '',
+        },
+
         'ntp_server_array': {
             'name': 'ntp_server_array',
             'group': HOST_DATA,
             'is_to_playbook': True,
-            'value': ["{{ dns_server_1 }}", "{{ dns_server_2 }}"],
+            'value': ["{{ ntp_server_1 }}", "{{ ntp_server_2 }}"],
         },
 
-        'vlan_vm_id_hd': {
-            'name': 'vlan_vm_id_hd',
-            'group': HOST_DATA,
+        # SNMP_DATA
+
+        'snmp_server_1': {
+            'name': 'SNMP Server 1',
+            'group': SNMP_DATA,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'snmp_server_2': {
+            'name': 'SNMP Server 2',
+            'group': SNMP_DATA,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'snmp_community': {
+            'name': 'SNMP Community',
+            'group': SNMP_DATA,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'snmp_port': {
+            'name': 'SNMP Port',
+            'group': SNMP_DATA,
+            'is_to_playbook': True,
+            'format_methods': ['format_filter_to_digits_only',],
+        },
+
+        # Syslog Server
+
+        'syslog_hostname': {
+            'name': 'syslog_hostname',
+            'group': SYSLOG_SERVER_DATA,
             'is_to_playbook': False,
             'value': '',
         },
+        'syslog_ip': {
+            'name': 'syslog_ip',
+            'group': SYSLOG_SERVER_DATA,
+            'is_to_playbook': True,
+            'value': '',
+        },
+
         'vlan_vm_name': {
             'name': 'vlan_vm_name',
             'group': VLAN_DATA,
@@ -212,6 +317,12 @@ class VmWareParser():
             row_num = self.parse_heading_table(row_num, grouped_heading)
         if grouped_heading == self.VLAN_DATA:
             row_num = self.parse_heading_table(row_num, grouped_heading)
+        if grouped_heading == self.SYSLOG_SERVER_DATA:
+            row_num = self.parse_heading_table(row_num, grouped_heading)
+        if grouped_heading == self.NTP_SERVER:
+            row_num = self.parse_heading_table(row_num, grouped_heading)
+        if grouped_heading == self.SNMP_DATA:
+            row_num = self.parse_heading_table(row_num, grouped_heading)
         return row_num
 
     def parse_file(self):
@@ -280,11 +391,19 @@ class VmWareParser():
     def format_filter_to_digits_only(value) -> str:
         """ format_filter_to_digits_only
         """
-        return ''.join([ch for ch in value if ch.isdigit()])
+        if str == type(value):
+            return ''.join([ch for ch in value if ch.isdigit()])
+        if float == type(value):
+            return int(value)
+        return value
 
     @staticmethod
     def format_vlan_id(value) -> str:
-        return value.split(' ')[-1].replace(')', '')
+        if str == type(value):
+            return value.split(' ')[-1].replace(')', '')
+        if float == type(value):
+            return int(value)
+        return value
 
     @staticmethod
     def format_integer(value) -> str:
