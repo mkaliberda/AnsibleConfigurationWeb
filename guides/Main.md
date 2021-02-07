@@ -6,7 +6,7 @@ Django has application structure
 
 [application docs](https://docs.djangoproject.com/en/3.1/ref/applications/)
 
-each application can contain:
+each application may contain:
 * `models` - class based representation of database tables
 * `migrations` - history of models changes
 * `test` - unit tests
@@ -28,7 +28,7 @@ example:
 ```python 
 path('playbook-form/<str:service_type>/step/upload/', PlaybookUploadStepViewForm.as_view(), name='playbook_step_upload'),
 
-'playbook-form/<str:service_type>/step/upload/' # path
+'playbook-form/<str:service_type>/step/upload/' # path where service_type is string parameter
 PlaybookUploadStepViewForm.as_view() # view
 name='playbook_step_upload' # name for referance in application
 
@@ -114,7 +114,7 @@ templates may inherit others templates
 
 ---
 
-**playbook_generator** - application witch controls whole process for generation configs
+**playbook_generator** - application witch controls whole process for generating configs
 
 with `urls.py` easy to understand for which pages using specifically ``Views``, each view has information about template usually it's ``template_name =`` 
 
