@@ -146,12 +146,15 @@ class PlaybookStaticVarsForm(generic.FormView):
     def get_form(self, form_class=None):
         super().get_form()
         formset = self.get_form_class()
-        return formset(queryset=StaticVarsValue.objects.filter(service_type=self.kwargs.get('service_type')))
+        form_qs = StaticVarsValue.objects.filter(service_type=self.kwargs.get('service_type'))
+        return formset(queryset=form_qs)
 
     def post(self, request, *args, **kwargs):
         formset = self.get_form_class()
         forms = formset(request.POST)
+        print('cleaned_data', forms)
         for form in forms:
+            print('cleaned_data', form.cleaned_data, form.is_valid)
             if form.is_valid():
                 if form.cleaned_data.get('key') and form.cleaned_data.get('value'):
                     if form.cleaned_data.get('DELETE') and form.cleaned_data.get('id'):

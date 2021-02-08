@@ -76,6 +76,8 @@ cd to the project folder
 
 ``python manage.py migrate`` to create tables in the database
 
+``python manage.py migrate`` to create tables in the database
+
 ## Setup gunicorn and supervisor
 
 create empty folder to store socket file
@@ -91,7 +93,7 @@ at the ``/etc/supervisord.d/`` create file ``ansible-web.ini`` following templat
 
 ``sudo supervisorctl status ansible-web`` to check the status
 
-``sudo supervisorctl restart ansible-web`` to restart task
+`python manage.py loaddata playbook_generator/fixtures/prod_static_vart.json` to load default static vars
 
  
 ## Setup nginx

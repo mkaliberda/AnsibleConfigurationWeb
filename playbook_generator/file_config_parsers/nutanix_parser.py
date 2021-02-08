@@ -24,6 +24,7 @@ class NutanixParser():
     SMTP = 'smtp'
     INFOBOX = 'infoblox'
     STATIC = 'static'
+    DEFAULT = 'default'
 
     GROUPED_HEADING = {
         'Cluster Configuration': CLUSTER_CONFIGURATION,
@@ -34,6 +35,7 @@ class NutanixParser():
         'Support and Storage': STORAGE,
         'SMTP & Prism Central': SMTP,
         'User VM VLAN(s)': USER_VLAN,
+        DEFAULT: DEFAULT,
     }
 
     """
@@ -114,6 +116,89 @@ class NutanixParser():
     }
 
     parsed_data = {
+        # Cluster Networking
+        'cvm_netmask': {
+            'name': 'Controller (CVM) – Subnet Mask',
+            'group': CLUSTER_NETWORKING,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'cvm_gateway': {
+            'name': 'Controller (CVM) – Default Gateway',
+            'group': CLUSTER_NETWORKING,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'hypervisor_iso': {
+            'name': 'Hervisor ISO',
+            'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
+            'is_to_playbook': True,
+            'value': {},
+        },
+        'hypervisor_netmask': {
+            'name': 'Hypervisor - Subnet Mask',
+            'group': CLUSTER_NETWORKING,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'hypervisor_gateway': {
+            'name': 'Hypervisor – Default Gateway',
+            'group': CLUSTER_NETWORKING,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'hypervisor_password': {
+            'name': 'hypervisor_password',
+            'group': CLUSTER_NETWORKING,
+            'is_default': True,
+            'is_to_playbook': True,
+            'value': 'nutanix',
+        },
+        'skip_hypervisor': {
+            'name': 'Skip Hypervisor',
+            'group': CLUSTER_CONFIGURATION,
+            'is_default': True,
+            'is_cluster_json': False,
+            'is_to_playbook': True,
+            'value': False,
+        },
+        'ipmi_netmask': {
+            'name': 'IPMI/iDRAC – Subnet Mask',
+            'group': CLUSTER_NETWORKING,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'ipmi_gateway': {
+            'name': 'IPMI/iDRAC – Default Gateway',
+            'group': CLUSTER_NETWORKING,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'is_imaging': {
+            'name': '',
+            'group': CLUSTER_CONFIGURATION,
+            'is_default': True,
+            'is_cluster_json': False,
+            'is_to_playbook': True,
+            'value': True,
+        },
+        'enable_ns': {
+            'name': '',
+            'group': CLUSTER_CONFIGURATION,
+            'is_default': True,
+            'is_cluster_json': True,
+            'is_to_playbook': True,
+            'value': 'false',
+        },
+        'redundancy_factor': {
+            'name': 'Cluster Redundancy Factor',
+            'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': True,
+            'is_to_playbook': True,
+            'value': None,
+            'format_methods': ['format_filter_to_digits_only'],
+        },
         # Cluster Configuration
         'location': {
             'name': 'Location',
@@ -143,34 +228,12 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': '',
         },
-        'redundancy_factor': {
-            'name': 'Cluster Redundancy Factor',
-            'group': CLUSTER_CONFIGURATION,
-            'is_cluster_json': True,
-            'is_to_playbook': True,
-            'value': None,
-            'format_methods': ['format_filter_to_digits_only'],
-        },
         'aos': {
             'name': 'Acropolis Operating System (AOS) version',
             'group': CLUSTER_CONFIGURATION,
             'is_cluster_json': False,
             'is_to_playbook': False,
             'value': '',
-        },
-        'hypervisor_iso': {
-            'name': 'Hervisor ISO',
-            'group': CLUSTER_CONFIGURATION,
-            'is_cluster_json': False,
-            'is_to_playbook': True,
-            'value': {},
-        },
-        'skip_hypervisor': {
-            'name': 'Skip Hypervisor',
-            'group': CLUSTER_CONFIGURATION,
-            'is_cluster_json': False,
-            'is_to_playbook': True,
-            'value': False,
         },
         'hypervisor_version': {
             'name': 'Hypervisor Version & Build',
@@ -179,32 +242,11 @@ class NutanixParser():
             'is_to_playbook': False,
             'value': '',
         },
-        'nos_package': {
-            'name': 'Nos Package',
-            'group': CLUSTER_CONFIGURATION,
-            'is_cluster_json': False,
-            'is_to_playbook': True,
-            'value': '/home/nutanix/foundation/nos/nutanix_installer_package-release-euphrates-5.15.3-stable-x86_64.tar.gz',
-        },
-        'is_imaging': {
-            'name': '',
-            'group': CLUSTER_CONFIGURATION,
-            'is_cluster_json': False,
-            'is_to_playbook': True,
-            'value': True,
-        },
         'witness_appliance_version': {
             'name': 'Nutanix Witness Appliance Version',
             'group': CLUSTER_CONFIGURATION,
             'is_cluster_json': False,
             'is_to_playbook': False,
-            'value': '',
-        },
-        'witness_address': {
-            'name': 'Nutanix Witness Appliance IP Address',
-            'group': CLUSTER_CONFIGURATION,
-            'is_cluster_json': False,
-            'is_to_playbook': True,
             'value': '',
         },
         'cluster_init_successful': {
@@ -213,44 +255,6 @@ class NutanixParser():
             'is_cluster_json': True,
             'is_to_playbook': True,
             'value': True,
-        },
-
-        # Cluster Networking
-        'cvm_netmask': {
-            'name': 'Controller (CVM) – Subnet Mask',
-            'group': CLUSTER_NETWORKING,
-            'is_to_playbook': True,
-            'value': '',
-        },
-        'cvm_gateway': {
-            'name': 'Controller (CVM) – Default Gateway',
-            'group': CLUSTER_NETWORKING,
-            'is_to_playbook': True,
-            'value': '',
-        },
-        'hypervisor_netmask': {
-            'name': 'Hypervisor - Subnet Mask',
-            'group': CLUSTER_NETWORKING,
-            'is_to_playbook': True,
-            'value': '',
-        },
-        'hypervisor_gateway': {
-            'name': 'Hypervisor – Default Gateway',
-            'group': CLUSTER_NETWORKING,
-            'is_to_playbook': True,
-            'value': '',
-        },
-        'ipmi_netmask': {
-            'name': 'IPMI/iDRAC – Subnet Mask',
-            'group': CLUSTER_NETWORKING,
-            'is_to_playbook': True,
-            'value': '',
-        },
-        'ipmi_gateway': {
-            'name': 'IPMI/iDRAC – Default Gateway',
-            'group': CLUSTER_NETWORKING,
-            'is_to_playbook': True,
-            'value': '',
         },
         'dns_server': {
             'name': 'DNS Servers',
@@ -272,17 +276,44 @@ class NutanixParser():
 
         'hypervisor_ip': {
             'group': NODES,
-            'is_to_playbook': True,
+            'is_to_playbook': False,
             'is_cluster_json': False,
             'value': [],
         },
-
         'cvm_ip': {
             'group': NODES,
             'is_cluster_json': True,
             'is_body_json': True,
             'is_to_playbook': True,
             'value': [],
+        },
+        'ipmi_ip': {
+            'group': NODES,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': [],
+        },
+        'hypervisor_hostname': {
+            'group': NODES,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': [],
+        },
+        'block_id': {
+            'group': NODES,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': [],
+        },
+        'witness_address': {
+            'name': 'Nutanix Witness Appliance IP Address',
+            'group': CLUSTER_CONFIGURATION,
+            'is_cluster_json': False,
+            'is_to_playbook': True,
+            'value': '',
         },
         'vlan_mgmt_and_cvm_name': {
             'group': VLAN,
@@ -307,7 +338,7 @@ class NutanixParser():
         },
         'vlan_ipmi_name': {
             'group': VLAN,
-            'is_to_playbook': True,
+            'is_to_playbook': False,
             'value': '',
         },
         'vlan_ipmi_id': {
@@ -340,12 +371,12 @@ class NutanixParser():
         },
         'vlan_vm_geteway': {
             'group': USER_VLAN,
-            'is_to_playbook': True,
+            'is_to_playbook': False,
             'value': '',
         },
         'vlan_vm_tagging': {
             'group': USER_VLAN,
-            'is_to_playbook': True,
+            'is_to_playbook': False,
             'value': '',
         },
         # storage
@@ -377,7 +408,7 @@ class NutanixParser():
         },
         'storage_deduplication': {
             'group': STORAGE,
-            'is_to_playbook': True,
+            'is_to_playbook': False,
             'value': '',
         },
         'storage_container_name': {
@@ -392,7 +423,7 @@ class NutanixParser():
         },
         'smtp_protocol': {
             'group': SMTP,
-            'is_to_playbook': True,
+            'is_to_playbook': False,
             'value': '',
         },
         'smtp_port': {
@@ -413,7 +444,7 @@ class NutanixParser():
         },
         'smtp_security_mode': {
             'group': SMTP,
-            'is_to_playbook': True,
+            'is_to_playbook': False,
             'value': '',
         },
         'smtp_address_to': {
@@ -430,6 +461,203 @@ class NutanixParser():
             'group': SMTP,
             'is_to_playbook': True,
             'value': '',
+        },
+        #
+        'ncli_path': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': '/home/nutanix/prism/cli/ncli',
+        },
+        'br0_interfaces': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'eth3 eth2',
+        },
+        'br0_lacp': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'None',
+        },
+        'br0_bond_mode': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'active-backup',
+        },
+        'alerts_config_status': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'Enabled',
+        },
+        'alerts_config_email_digest': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': True,
+        },
+        'alerts_config_enable_nutanix': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': True,
+        },
+        'cvm_cluster_server_port': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 9440,
+        },
+        'ahv_hardening_aide': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': True,
+        },
+        'ahv_hardening_password': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': True,
+        },
+        'ahv_hardening_schedule': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'hourly',
+        },
+        'ahv_hardening_banner': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': True,
+        },
+        'ahv_hardening_core': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': False,
+        },
+        'cvm_hardening_aide': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': True,
+        },
+        'cvm_hardening_password': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': True,
+        },
+        'cvm_hardening_schedule': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'hourly',
+        },
+        'cvm_hardening_banner': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': True,
+        },
+        'cvm_hardening_core': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': False,
+        },
+        'ha_enabled': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': True,
+        },
+        'ha_num_host_failures_to_tolerate': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': '1',
+        },
+        'ha_reservation_type': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'ReserveSegments',
+        },
+        'ha_state': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'HighlyAvailable',
+        },
+        'role_desired_role': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'ROLE_USER_ADMIN',
+        },
+        'role_entityType': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'USER',
+        },
+        'role_entityValues': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'PRISM-GLB-IM-AD',
+        },
+        'foundation_server_ip': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': '10.195.54.77',
+        },
+        'foundation_server_port': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': '8000',
+        },
+        'thycotic_service_account': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'svc_sssyseng',
         },
     }
     """
@@ -683,7 +911,6 @@ class NutanixParser():
 
     def get_json_dict(self):
         default_values = {
-            'hypervisor_password': 'nutanix',
             'tests': {
                 'run_syscheck': True,
                 'run_ncc': True,
@@ -707,7 +934,6 @@ class NutanixParser():
         }
 
         clusters_default_values = {
-            'enable_ns': False,
             'cluster_init_now': True,
         }
 
