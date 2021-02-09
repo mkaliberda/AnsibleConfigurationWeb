@@ -176,7 +176,7 @@ class VmWareParser():
             'name': 'dns_server_array',
             'group': HOST_DATA,
             'is_to_playbook': True,
-            'value': ["{{ dns_server_1 }}", "{{ dns_server_2 }}"],
+            'value': "[{{ dns_server_1 }}, {{ dns_server_2 }}]",
         },
 
         # NTP Server
@@ -197,7 +197,7 @@ class VmWareParser():
             'name': 'ntp_server_array',
             'group': HOST_DATA,
             'is_to_playbook': True,
-            'value': ["{{ ntp_server_1 }}", "{{ ntp_server_2 }}"],
+            'value': "[{{ ntp_server_1 }}, {{ ntp_server_2 }}]",
         },
 
         # SNMP_DATA
