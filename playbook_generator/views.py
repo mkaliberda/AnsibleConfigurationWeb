@@ -74,7 +74,10 @@ class PlaybookUploadStepViewForm(generic.FormView):
             def quoted_presenter(dumper, data):
                 return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='"')
 
-            yaml.add_representer(str, quoted_presenter)
+            class quoted(str):
+                pass
+
+            yaml.add_representer(quoted, quoted_presenter)
 
             self.uploaded_config = ConfigUpload.objects.create(parsed_data=parser_class.parsed_data,
                                                              tag=request.POST.get('tags'))
@@ -83,10 +86,13 @@ class PlaybookUploadStepViewForm(generic.FormView):
                 f"upload_{int(timezone.now().timestamp())}.json",
                 ContentFile(json.dumps(parser_class.get_json_dict(), indent=2))
             )
+            yaml_parsed_dict = {}
+            for key, val in parser_class.get_yml_dict(self.uploaded_config.config_json_file.path).items():
+                yaml_parsed_dict[key] = quoted(val)
             self.uploaded_config.config_yml_file.save(
                 f"upload_{int(timezone.now().timestamp())}.yaml",
                 ContentFile(yaml.dump(
-                    parser_class.get_yml_dict(self.uploaded_config.config_json_file.path),
+                    yaml_parsed_dict,
                     default_flow_style=False, sort_keys=False, encoding='utf-8')
                 )
             )
