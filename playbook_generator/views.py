@@ -81,10 +81,10 @@ class PlaybookUploadStepViewForm(generic.FormView):
                 ContentFile(json.dumps(parser_class.get_json_dict(), indent=2))
             )
             yaml_loader = YamlLoader()
-
+            parsed_yaml = parser_class.get_yml_dict(self.uploaded_config.config_json_file.path)
             self.uploaded_config.config_yml_file.save(
                 f"upload_{int(timezone.now().timestamp())}.yaml",
-                ContentFile(yaml_loader.yaml_dump(parser_class.get_yml_dict())),
+                ContentFile(yaml_loader.yaml_dump(parsed_yaml)),
             )
             self.uploaded_config.save()
             return redirect(to=self.get_success_url())
