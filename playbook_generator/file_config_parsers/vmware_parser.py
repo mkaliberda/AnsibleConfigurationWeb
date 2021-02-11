@@ -108,7 +108,7 @@ class VmWareParser():
             'group': HOST_DATA,
             'is_to_playbook': True,
             'value': '',
-            'format_methods': ['format_vlan_id', 'format_filter_to_digits_only'],
+            'format_methods': ['format_vlan_id', 'format_filter_to_digits_only', 'format_integer'],
         },
 
         'esxi_host_ilo_ip': {
@@ -176,7 +176,7 @@ class VmWareParser():
             'name': 'dns_server_array',
             'group': HOST_DATA,
             'is_to_playbook': True,
-            'value': "[{{ dns_server_1 }}, {{ dns_server_2 }}]",
+            'value': ["{{ dns_server_1 }}", "{{ dns_server_2 }}"],
         },
 
         # NTP Server
@@ -197,7 +197,7 @@ class VmWareParser():
             'name': 'ntp_server_array',
             'group': HOST_DATA,
             'is_to_playbook': True,
-            'value': "[{{ ntp_server_1 }}, {{ ntp_server_2 }}]",
+            'value': ['{{ ntp_server_1 }}', '{{ ntp_server_2 }}'],
         },
 
         # SNMP_DATA
@@ -246,14 +246,15 @@ class VmWareParser():
             'name': 'vlan_vm_name',
             'group': VLAN_DATA,
             'is_to_playbook': True,
-            'value': '',
+            'is_default': True,
+            'value': '{{ vlan_vm_id }}-vmnetwork',
         },
         'vlan_vm_id':  {
             'name': 'vlan_vm_id',
             'group': VLAN_DATA,
             'is_to_playbook': True,
             'value': '',
-            'format_methods': ['format_vlan_id', 'format_filter_to_digits_only'],
+            'format_methods': ['format_vlan_id', 'format_filter_to_digits_only', 'format_integer'],
         },
     }
 
@@ -289,16 +290,21 @@ class VmWareParser():
         """
         headers = self.get_headers(row_num, to_group)
         row_num += 1
+
         while row_num < self.sheet.nrows and self.current_row(row_num):
             if not len(self.current_row(row_num)) or not self.current_row(row_num)[0]:
                 return row_num
             for inx in range(0, len(self.current_row(row_num))):
+                if inx > len(headers) - 1:
+                    headers.append('')
+                print(inx, len(headers))
                 if not self.parsed_data.get(f"{headers[inx]}"):
                     continue
                 value = self.set_formating_data(self.parsed_data.get(f"{headers[inx]}"),
                                                 self.current_row(row_num)[inx])
                 try:
-                    self.parsed_data[f"{headers[inx]}"]['value'] = value
+                    if not self.parsed_data[f"{headers[inx]}"].get('is_default'):
+                        self.parsed_data[f"{headers[inx]}"]['value'] = value
                 except KeyError:
                     print('error!!!', headers[inx], value, row_num)
             row_num += 1
@@ -353,8 +359,7 @@ class VmWareParser():
         def format_val(val):
             if type(val) == bool:
                 return val
-            else:
-                return str(val)
+            return val
 
         for key, data in self.parsed_data.items():
             value = data.get('value')
@@ -371,8 +376,7 @@ class VmWareParser():
         def format_val(val):
             if type(val) == bool:
                 return val
-            else:
-                return str(val)
+            return val
         for key, data in self.parsed_data.items():
             value = data.get('value')
             if value is not None and data.get('is_to_playbook'):

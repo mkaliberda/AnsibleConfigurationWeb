@@ -22,8 +22,10 @@ class NutanixParser():
     USER_VLAN = 'uesr_vlan'
     STORAGE = 'storage'
     SMTP = 'smtp'
+    SNMP = 'snmp'
     INFOBOX = 'infoblox'
     STATIC = 'static'
+    VM = 'vm'
     DEFAULT = 'default'
 
     GROUPED_HEADING = {
@@ -33,9 +35,11 @@ class NutanixParser():
         'IPMI': NODES,
         'Nutanix VLANs': VLAN,
         'Support and Storage': STORAGE,
-        'SMTP & Prism Central': SMTP,
+        'SMTP, Prism Central & Foundation': SMTP,
+        'SNMP & Syslog': SNMP,
         'User VM VLAN(s)': USER_VLAN,
-        DEFAULT: DEFAULT,
+        'Virtual Machine': VM,
+        'DEFAULT': DEFAULT,
     }
 
     """
@@ -112,6 +116,13 @@ class NutanixParser():
             'Email Address TO': ['smtp_address_to', 'pulse_email_contact'],
             'Email Address FROM': 'smtp_address_from',
             'PRISM Central Instance IP': 'prism_central_ip',
+            'Foundation Server (IP, Port)': 'prism_central_ip',
+        },
+        SNMP: {
+            'SNMP': 'snmp_server',
+            'Syslog Server': 'syslog_ip',
+            'Protocol': 'syslog_protocol',
+            'Port': 'syslog_port',
         }
     }
 
@@ -163,14 +174,14 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': False,
         },
-        'ipmi_netmask': {
-            'name': 'IPMI/iDRAC – Subnet Mask',
+        'ipmi_gateway': {
+            'name': 'IPMI/iDRAC – Default Gateway',
             'group': CLUSTER_NETWORKING,
             'is_to_playbook': True,
             'value': '',
         },
-        'ipmi_gateway': {
-            'name': 'IPMI/iDRAC – Default Gateway',
+        'ipmi_netmask': {
+            'name': 'IPMI/iDRAC – Subnet Mask',
             'group': CLUSTER_NETWORKING,
             'is_to_playbook': True,
             'value': '',
@@ -256,15 +267,15 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': True,
         },
-        'dns_server': {
-            'name': 'DNS Servers',
+        'ntp_server': {
+            'name': 'NTP Servers',
             'group': CLUSTER_NETWORKING,
             'is_cluster_json': True,
             'is_to_playbook': True,
             'value': [],
         },
-        'ntp_server': {
-            'name': 'NTP Servers',
+        'dns_server': {
+            'name': 'DNS Servers',
             'group': CLUSTER_NETWORKING,
             'is_cluster_json': True,
             'is_to_playbook': True,
@@ -273,10 +284,9 @@ class NutanixParser():
         'nodes': {
             'group': NODES,
         },
-
         'hypervisor_ip': {
             'group': NODES,
-            'is_to_playbook': False,
+            'is_to_playbook': True,
             'is_cluster_json': False,
             'value': [],
         },
@@ -343,18 +353,18 @@ class NutanixParser():
         },
         'vlan_ipmi_id': {
             'group': VLAN,
-            'is_to_playbook': True,
+            'is_to_playbook': False,
             'value': '',
             'format_methods': ['format_filter_to_digits_only'],
         },
         'vlan_ipmi_gateway': {
             'group': VLAN,
-            'is_to_playbook': True,
+            'is_to_playbook': False,
             'value': '',
         },
         'vlan_ipmi_tagging': {
             'group': VLAN,
-            'is_to_playbook': True,
+            'is_to_playbook': False,
             'value': '',
         },
         # vlan user
@@ -403,7 +413,7 @@ class NutanixParser():
         'storage_compression_delay': {
             'group': STORAGE,
             'is_to_playbook': True,
-            'value': '',
+            'value': '0',
             'format_methods': ['format_integer'],
         },
         'storage_deduplication': {
@@ -470,6 +480,28 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': '/home/nutanix/prism/cli/ncli',
         },
+        'syslog_ip': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'syslog_port': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': '',
+            'format_methods': ['format_integer'],
+        },
+        'syslog_protocol': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': '',
+        },
         'br0_interfaces': {
             'group': DEFAULT,
             'is_cluster_json': True,
@@ -518,6 +550,13 @@ class NutanixParser():
             'is_body_json': True,
             'is_to_playbook': True,
             'value': 9440,
+        },
+        'snmp_server': {
+            'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': [],
         },
         'ahv_hardening_aide': {
             'group': DEFAULT,
@@ -650,10 +689,32 @@ class NutanixParser():
             'is_cluster_json': True,
             'is_body_json': True,
             'is_to_playbook': True,
-            'value': '8000',
+            'value': 8000,
         },
         'thycotic_service_account': {
             'group': DEFAULT,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'svc_sssyseng',
+        },
+
+        'vm_IM2016TemplateVM_name': {
+            'group': VM,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'svc_sssyseng',
+        },
+        'vm_Kofax_Name': {
+            'group': VM,
+            'is_cluster_json': True,
+            'is_body_json': True,
+            'is_to_playbook': True,
+            'value': 'svc_sssyseng',
+        },
+        'vm_vGateway_Name': {
+            'group': VM,
             'is_cluster_json': True,
             'is_body_json': True,
             'is_to_playbook': True,
@@ -827,6 +888,17 @@ class NutanixParser():
         row_num += 1
         return row_num
 
+    def parse_vm(self, row_num):
+        row_num += 1
+
+        if row_num + 1 < self.sheet.nrows:
+            self.parsed_data['vm_IM2016TemplateVM_name']['value'] = self.current_row(row_num + 1)[0]
+        if row_num + 2 < self.sheet.nrows:
+            self.parsed_data['vm_Kofax_Name']['value'] = self.current_row(row_num + 2)[0]
+        if row_num + 3 < self.sheet.nrows:
+            self.parsed_data['vm_vGateway_Name']['value'] = self.current_row(row_num + 3)[0]
+        return row_num
+
     def parse_with_type(self, row_num):
         """ parse_with_type
         select method for parse grouped block
@@ -848,6 +920,10 @@ class NutanixParser():
             row_num = self.parse_item_config(row_num, grouped_heading, 4)
         if grouped_heading == self.SMTP:
             row_num = self.parse_item_config(row_num, grouped_heading, 5)
+        if grouped_heading == self.SNMP:
+            row_num = self.parse_item_config(row_num, grouped_heading, 5)
+        if grouped_heading == self.VM:
+            row_num = self.parse_vm(row_num)
         return row_num
 
     def set_formating_data(self, item_obj, value):
@@ -868,6 +944,25 @@ class NutanixParser():
         # method = self.__getattribute__('format_vlan_id')
         # print(method('CJ (VLAN 102)'))
 
+    @staticmethod
+    def add_array(yml_dict, value_array, key):
+        yml_dict.update({
+            f"{key}_array": [],
+        })
+        for inx, item in enumerate(value_array):
+            yml_dict.update({
+                f"{key}_{inx + 1}": item,
+            })
+            yml_dict[f"{key}_array"].append(f"{{{{ {key}_{inx + 1} }}}}")
+
+    @staticmethod
+    def add_node_array(yml_dict, value_array, key):
+        yml_dict.update({
+            f"{key}_array": [],
+        })
+        for inx, item in enumerate(value_array):
+            yml_dict[f"{key}_array"].append(f"{{{{node{inx + 1}_{key}}}}}")
+
     def get_yml_dict(self, json_path=None):
         """ get_yml_dict
         reformat self.parsed_data to dict which will be dumped to yaml
@@ -877,27 +972,30 @@ class NutanixParser():
             'foundation_json': json_path
         }
 
+        values_to_copy = {
+            # copy from key: copy to key
+            'current_cvm_vlan_tag': 'vlan_mgmt_and_cvm_id',
+        }
+
         def format_val(val):
             if type(val) == bool:
                 return val
-            else:
-                return str(val)
+            return val
 
         for key, data in self.parsed_data.items():
             value = data.get('value')
             if value is not None and data.get('is_to_playbook'):
-                if type(value) == list:
-                    yml_dict.update({
-                        f"{key}_array": format_val(value),
-                    })
-                    for inx, item in enumerate(value):
-                        yml_dict.update({
-                            f"{key}_{inx + 1}": format_val(item),
-                        })
+                if data.get('group') == self.NODES:
+                    if type(value) == list:
+                        self.add_node_array(yml_dict, value, key)
                 else:
-                    yml_dict.update({
-                        key: format_val(value),
-                    })
+                    if type(value) == list:
+                        self.add_array(yml_dict, value, key)
+                    else:
+                        yml_dict.update({
+                            key: format_val(value),
+                        })
+
             if key == 'nodes':
                 for inx, (node_key, node_obj) in enumerate(data.items()):
                     if node_key == 'group':
@@ -907,7 +1005,28 @@ class NutanixParser():
                             f"node{inx}_{k}": format_val(node_val),
                         })
 
+        yml_dict.update({ **self.copy_values(values_to_copy) })
+
         return yml_dict
+
+    def format_val(self, val, key):
+        save_format = ['cluster_members', 'hypervisor_iso']
+        cast_to_int = []
+        if key in save_format:
+            return val
+        if type(val) == bool:
+            return val
+        if type(val) == list:
+            return ', '.join(val)
+        else:
+            return str(val)
+
+    def copy_values(self, value_to_copy):
+        copied_values = {}
+        for target_key, dist_key in value_to_copy.items():
+            if self.parsed_data.get(dist_key):
+                copied_values[target_key] = self.format_val(self.parsed_data.get(dist_key).get('value'), dist_key)
+        return copied_values
 
     def get_json_dict(self):
         default_values = {
@@ -937,27 +1056,6 @@ class NutanixParser():
             'cluster_init_now': True,
         }
 
-        def copy_values(value_to_copy):
-            copied_values = {}
-            for target_key, dist_key in value_to_copy.items():
-                if self.parsed_data.get(dist_key):
-                    copied_values[target_key] = format_val(self.parsed_data.get(dist_key).get('value'), dist_key)
-            return copied_values
-
-        def format_val(val, key):
-            save_format = ['cluster_members', 'hypervisor_iso']
-            cast_to_int = ['redundancy_factor',]
-            if key in save_format:
-                return val
-            if key in cast_to_int:
-                return int(val)
-            if type(val) == bool:
-                return val
-            if type(val) == list:
-                return ', '.join(val)
-            else:
-                return str(val)
-
         def change_cluster_key(key):
             changed_keys = {
                 'dns_server': 'cvm_dns_servers',
@@ -981,28 +1079,27 @@ class NutanixParser():
             value = data.get('value')
             if value is not None and data.get('is_to_playbook'):
                 if data.get('is_cluster_json'):
-                    cluster_config.update({ change_cluster_key(key): format_val(value, change_cluster_key(key)) })
+                    cluster_config.update({ change_cluster_key(key): self.format_val(value, change_cluster_key(key)) })
                     if data.get('is_body_json'):
-                        json_dict.update({change_key(key): format_val(value, key)})
+                        json_dict.update({change_key(key): self.format_val(value, key)})
                 else:
-                    json_dict.update({ change_key(key): format_val(value, key) })
+                    json_dict.update({ change_key(key): self.format_val(value, key) })
             if key == 'nodes':
                 for inx, (node_key, node_obj) in enumerate(data.items()):
                     node_dict = {}
                     if node_key == 'group':
                         continue
                     for k, node_val in node_obj.items():
-                        node_dict.update({ change_key(k, True): format_val(node_val, key) })
+                        node_dict.update({ change_key(k, True): self.format_val(node_val, key) })
 
                     json_dict['blocks'].append({
                         'block_id': node_dict.pop('block_id'),
                         'nodes': [node_dict],
                     })
-        copied_val = copy_values(values_to_copy)
 
-        json_dict.update({ **copied_val })
+        json_dict.update({ **self.copy_values(values_to_copy) })
 
-        clusters_copied_val = copy_values(values_to_copy_cluster)
+        clusters_copied_val = self.copy_values(values_to_copy_cluster)
         json_dict['clusters'].append({
             **clusters_default_values,
             **cluster_config,
@@ -1018,11 +1115,19 @@ class NutanixParser():
     def format_filter_to_digits_only(value) -> str:
         """ format_filter_to_digits_only
         """
-        return ''.join([ch for ch in value if ch.isdigit()])
+        if str == type(value):
+            return ''.join([ch for ch in value if ch.isdigit()])
+        if float == type(value):
+            return int(value)
+        return value
 
     @staticmethod
     def format_vlan_id(value) -> str:
-        return value.split(' ')[-1].replace(')', '')
+        if str == type(value):
+            return value.split(' ')[-1].replace(')', '')
+        if float == type(value):
+            return int(value)
+        return value
 
     @staticmethod
     def format_integer(value) -> str:

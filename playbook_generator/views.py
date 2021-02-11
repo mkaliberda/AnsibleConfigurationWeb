@@ -13,6 +13,7 @@ from playbook_generator.file_config_parsers import ParserFactory
 from playbook_generator.forms import FileUploadVarsPlaybookForm, PlaybookModeForm, StaticVarsValueModelForm
 from playbook_generator.models import PlaybookServiceTypes, StaticVarsValue
 from playbook_generator.models import ConfigUpload
+from utils import YamlLoader
 
 
 class PlaybookHomeView(generic.RedirectView):
@@ -70,14 +71,7 @@ class PlaybookUploadStepViewForm(generic.FormView):
         if form.is_valid():
             parser_class = ParserFactory(event_type=service_type).parser_class(file_contents=file.read())
             parser_class.parse_file()
-            # define a custom representer for strings
-            def quoted_presenter(dumper, data):
-                return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='"')
 
-            class quoted(str):
-                pass
-
-            yaml.add_representer(quoted, quoted_presenter)
 
             self.uploaded_config = ConfigUpload.objects.create(parsed_data=parser_class.parsed_data,
                                                              tag=request.POST.get('tags'))
@@ -86,15 +80,11 @@ class PlaybookUploadStepViewForm(generic.FormView):
                 f"upload_{int(timezone.now().timestamp())}.json",
                 ContentFile(json.dumps(parser_class.get_json_dict(), indent=2))
             )
-            yaml_parsed_dict = {}
-            for key, val in parser_class.get_yml_dict(self.uploaded_config.config_json_file.path).items():
-                yaml_parsed_dict[key] = quoted(val)
+            yaml_loader = YamlLoader()
+
             self.uploaded_config.config_yml_file.save(
                 f"upload_{int(timezone.now().timestamp())}.yaml",
-                ContentFile(yaml.dump(
-                    yaml_parsed_dict,
-                    default_flow_style=False, sort_keys=False, encoding='utf-8')
-                )
+                ContentFile(yaml_loader.yaml_dump(parser_class.get_yml_dict())),
             )
             self.uploaded_config.save()
             return redirect(to=self.get_success_url())
