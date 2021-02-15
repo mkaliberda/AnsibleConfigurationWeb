@@ -409,6 +409,7 @@ class NutanixParser():
             'group': STORAGE,
             'is_to_playbook': True,
             'value': '',
+            'format_methods': ['format_human_to_bool'],
         },
         'storage_compression_delay': {
             'group': STORAGE,
@@ -1133,4 +1134,7 @@ class NutanixParser():
     def format_integer(value) -> str:
         return str(int(value))
 
+    @staticmethod
+    def format_human_to_bool(value) -> str:
+        return value == 'Yes'
 
