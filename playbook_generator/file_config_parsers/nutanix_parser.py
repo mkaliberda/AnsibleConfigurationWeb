@@ -310,6 +310,7 @@ class NutanixParser():
             'is_body_json': True,
             'is_to_playbook': True,
             'value': [],
+            'format_methods': ['format_host_name', ],
         },
         'block_id': {
             'group': NODES,
@@ -825,12 +826,7 @@ class NutanixParser():
             'is_bare_metal': True,
         }
 
-        NODE_VALUES = {
-            'hypervisor_hostname': {
-                'format_methods': ['format_host_name',],
-            },
-        }
-
+        NODE_VALUES = {}
 
         NODE_KEY = 'ipmi_ip'
         headers = self.get_headers(row_num, to_group)
