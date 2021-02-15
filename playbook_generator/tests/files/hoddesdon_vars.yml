@@ -1,0 +1,140 @@
+---
+# All variables needed for the Hoddesdon environment
+
+cvm_netmask: "255.255.255.224" #parse from XLSX
+cvm_gateway: "10.212.76.97" #parse from XLSX
+current_cvm_vlan_tag: "102" #parse from XLSX
+hypervisor_iso: {} #default, not in UI
+hypervisor_netmask: "255.255.255.224" #parse from XLSX
+hypervisor_gateway: "10.212.76.97" #parse from XLSX
+hypervisor_password: "nutanix" #default, not in UI
+skip_hypervisor: false #default, not in UI
+ipmi_gateway: "10.212.76.33" #parse from XLSX
+ipmi_netmask: "255.255.255.224" #parse from XLSX
+nos_package: "/home/nutanix/foundation/nos/nutanix_installer_package-release-euphrates-5.15.4-stable-x86_64.tar.gz" #static var on website
+is_imaging: true #default, not in UI
+enable_ns: "false" #default, not in UI
+redundancy_factor: "2" #default, not in UI
+cluster_name: "UK-HOD-AHV-CPG-C01" #parse from XLSX
+cluster_external_ip: "10.212.76.110" #parse from XLSX
+cluster_init_successful: true #default, not in UI
+
+ntp_server_1 : "10.195.121.44" #parse from XLSX
+ntp_server_2 : "10.198.121.44" #parse from XLSX
+ntp_server_3 : "10.130.121.44" #parse from XLSX
+ntp_server_array: ["{{ ntp_server_1 }}", "{{ ntp_server_2 }}", "{{ ntp_server_3 }}"] #default, not in UI
+
+dns_server_1 : "10.195.121.44" #parse from XLSX
+dns_server_2 : "10.198.121.44" #parse from XLSX
+dns_server_3 : "10.130.121.44" #parse from XLSX
+dns_server_array: ["{{ dns_server_1 }}", "{{ dns_server_2 }}", "{{ dns_server_3 }}"] #default, not in UI
+
+node1_ipmi_user: "ADMIN" #parse from XLSX
+node1_image_now: true #default, not in UI
+node1_hypervisor: "kvm" #default, not in UI
+node1_hypervisor_hostname: "uk-hod-ahv-cpg-c01-n01" #parse from XLSX
+node1_ipmi_ip: "10.212.76.55" #parse from XLSX
+node1_node_position: "A" #parse from XLSX
+node1_ipmi_password: "c3@iqw1R378F$" #parse from XLSX
+node1_ipmi_configure_now: false #default, not in UI
+node1_cvm_ip: "10.212.76.113" #parse from XLSX
+node1_is_bare_metal: true #default, not in UI
+node1_hypervisor_ip: "10.212.76.111" #parse from XLSX
+node1_block_id: "20FM5E350003" #parse from XLSX
+
+node2_ipmi_user: "ADMIN" #parse from XLSX
+node2_image_now: true #default, not in UI
+node2_hypervisor: "kvm" #default, not in UI
+node2_hypervisor_hostname: "uk-hod-ahv-cpg-c01-n02" #parse from XLSX
+node2_ipmi_ip: "10.212.76.56" #parse from XLSX
+node2_node_position: "A" #parse from XLSX
+node2_ipmi_password: "c3@iqw1R378F$" #parse from XLSX
+node2_ipmi_configure_now: false #default, not in UI
+node2_cvm_ip: "10.212.76.114" #parse from XLSX
+node2_is_bare_metal: true #default, not in UI
+node2_hypervisor_ip: "10.212.76.112" #parse from XLSX
+node2_block_id: "20FM5E340093" #parse from XLSX
+
+hypervisor_ip_array: ["{{ node1_hypervisor_ip }}", "{{ node2_hypervisor_ip }}"] #default, not in UI, should dynamically grow with number of nodes
+cvm_ip_array: ["{{ node1_cvm_ip }}" , "{{ node2_cvm_ip }}"] #default, not in UI, should dynamically grow with number of nodes
+ipmi_ip_array: ["{{ node1_ipmi_ip }}", "{{ node2_ipmi_ip }}"] #default, not in UI, should dynamically grow with number of nodes
+hypervisor_hostname_array: ["{{ node1_hypervisor_hostname }}", "{{ node2_hypervisor_hostname }}"] #default, not in UI, should dynamically grow with number of nodes
+hypervisor_block_array: ["{{ node1_block_id }}", "{{ node2_block_id }}"] #default, not in UI, should dynamically grow with number of nodes
+
+witness_address: "10.195.54.22" #parse from XLSX
+
+vlan_mgmt_and_cvm_name: "HOD-NTX-MGMT" #parse from XLSX
+vlan_mgmt_and_cvm_id: "102" #parse from XLSX
+vlan_mgmt_and_cvm_gateway: "10.212.76.97" #parse from XLSX
+vlan_mgmt_and_cvm_tagging: "No" #parse from XLSX
+vlan_ipmi_id: "105" #parse from XLSX
+vlan_ipmi_gateway: "10.212.76.33" #parse from XLSX
+vlan_ipmi_tagging: "No" #parse from XLSX
+vlan_vm_name: "HOD-NTX-VM" #parse from XLSX
+vlan_vm_id: "100" #parse from XLSX
+
+pulse_enabled: "Yes" #parse from XLSX
+pulse_email_contact: "gti-syseng-virtualization.groups@ironmountain.com" #parse from XLSX
+
+storage_pool_name: "UK-HOD-CPG-C01-NTX-SP" #parse from XLSX
+storage_compression_enabled: True #parse from XLSX, spreadsheet will say Yes/No, please convert to True/False (case sensitive)
+storage_compression_delay: "0" #parse from XLSX
+storage_container_name: "UK-HOD-CPG-C01-RF2-CTNR-01" #parse from XLSX
+
+smtp_address: "xmail.emea.ironmountain.com" #parse from XLSX
+smtp_port: "25" #parse from XLSX
+smtp_address_to: "gti-syseng-virtualization.groups@ironmountain.com" #parse from XLSX
+smtp_address_from: "uk-prism@ironmountain.com" #parse from XLSX
+
+prism_central_ip: "10.195.54.85" #parse from XLSX
+prism_central_username: "ntx_adm" #static var on website
+
+
+infoblox_dev_service_account: "SVC_ibx_d_RW" #static var on website
+infoblox_prod_service_account: "SVC_ibx_p_RW" #static var on website
+infoblox_dev_server: "10.150.121.139" #static var on website
+infoblox_prod_server: "10.130.121.9" #static var on website
+
+banner_checksum: "d0401eea405d24f12492e0213fa6944d0c2c376f" #static var on website
+ncli_path: "/home/nutanix/prism/cli/ncli" #default, not in UI
+syslog_ip: "10.195.55.56" #parse from XLSX
+syslog_port: "514" #parse from XLSX
+syslog_protocol: "TCP" #parse from XLSX
+br0_interfaces: "eth3 eth2" #default, not in UI
+br0_lacp: "None" #default, not in UI
+br0_bond_mode: "active-backup" #default, not in UI
+alerts_config_status: "Enabled" #default, not in UI
+alerts_config_email_digest: true #default, not in UI
+alerts_config_enable_nutanix: true #default, not in UI
+cvm_cluster_server_port: 9440 #default, not in UI
+snmp_server_1: "172.30.201.40" #parse from XLSX
+snmp_server_2: "172.30.201.65" #parse from XLSX
+snmp_server_array: ["{{ snmp_server_1 }}", "{{ snmp_server_2 }}"]  #default, not in UI
+directory_url: "ldaps://usnusgadnap04.na.imtn.com:3269" #static var on website
+directory_domain: "na.imtn.com" #static var on website
+directory_name: "IMTN" #static var on website
+directory_service_account_username: "svc_nutanix" #static var on website
+ahv_hardening_aide: true #default, not in UI
+ahv_hardening_password: true #default, not in UI
+ahv_hardening_schedule: "hourly" #default, not in UI
+ahv_hardening_banner: true #default, not in UI
+ahv_hardening_core: false #default, not in UI
+cvm_hardening_aide: true #default, not in UI
+cvm_hardening_password: true #default, not in UI
+cvm_hardening_schedule: "hourly" #default, not in UI
+cvm_hardening_banner: true #default, not in UI
+cvm_hardening_core: false #default, not in UI
+ha_enabled: true #default, not in UI
+ha_num_host_failures_to_tolerate: "1" #default, not in UI
+ha_reservation_type: "ReserveSegments" #default, not in UI
+ha_state: "HighlyAvailable" #default, not in UI
+role_desired_role: "ROLE_USER_ADMIN" #default, not in UI
+role_entityType: "USER" #default, not in UI
+role_entityValues: "PRISM-GLB-IM-ADM" #static var on website  
+foundation_server_ip: "10.195.54.77" #parse from XLSX
+foundation_server_port: 8000 #parse from XLSX
+thycotic_service_account: "svc_sssyseng" #static var on website
+
+vm_IM2016TemplateVM_name: "UKHODMKX11AP01" #parse from XLSX
+vm_Kofax_Name: "UKHODMKX11AP02" #parse from XLSX
+vm_vGateway_Name: "UKHODMCTGP01" #parse from XLSX

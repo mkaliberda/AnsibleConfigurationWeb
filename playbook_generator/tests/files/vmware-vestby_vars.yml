@@ -1,0 +1,45 @@
+# All variables needed for the Vestby environment
+
+esxi_host_name: "vst-esx-crp-c01-n01"
+esxi_host_mgmt_ip: "10.220.120.100"
+esxi_host_mgmt_subnet: "255.255.255.224"
+esxi_host_mgmt_gw: "10.220.120.97"
+esxi_host_mgmt_vlan_id: "102"
+
+esxi_host_ilo_ip: "10.220.120.41"
+esxi_host_ilo_username: "Administrator"
+esxi_host_ilo_pw: "MV69ZZ2M"
+
+datastore_name: "{{ esxi_host_name }}-local"
+
+vcenter_address: "UKRSVCP03.na.imtn.com"
+
+country: "Norway"
+dc_name: "VST"
+
+dns_server_1: "10.195.121.44"
+dns_server_2: "10.198.121.44"
+dns_server_array: ["{{ dns_server_1 }}", "{{ dns_server_2 }}"]
+
+ntp_server_1: "10.195.121.44"
+ntp_server_2: "10.198.121.44"
+
+ntp_server_array: ["{{ ntp_server_1 }}", "{{ ntp_server_2 }}"]
+
+snmp_server_1: "172.30.201.40"
+snmp_server_2: "172.30.201.65"
+snmp_community: "1m_2cSvr"
+snmp_port: 162
+
+syslog_ip: "10.198.55.46"
+
+vlan_vm_name: "{{ vlan_vm_id }}-vmnetwork"
+vlan_vm_id: "100"
+
+### These will be static variables that will be manually added in the production site
+infoblox_dev_service_account: "SVC_ibx_d_RW"
+infoblox_prod_service_account: "SVC_ibx_p_RW"
+infoblox_dev_server: "10.150.121.139"
+infoblox_prod_server: "10.130.121.9"
+secondaryesxiaccount: "irmroot"
+thycotic_service_account: "svc_sssyseng"
