@@ -4,7 +4,8 @@
 
 {#    <p>{{ key }}: {{ value }}</p>#}
     <div class="uk-container">
-      <h3 class="color__heading">Please, review parsed vars</h3>
+      <h3 class="color__heading">Variable Review</h3>
+      <h4 style="color:red">Failure to review the variables below could lead to interruptions in service or loss of data!</h4>
       <table class="review-vars__table uk-table uk-table-divider uk-table-small uk-table-justify">
       <thead>
         <tr>
@@ -70,7 +71,7 @@
       <a class="uk-button uk-button-primary"
          href="{% url 'playbook_generator:playbook_step_instruction' service_type=service_type config_uuid=config_uuid %}"
       >
-        Accept
+        I've Reviewed the Variables
       </a>
     </div>
 {% endblock %}
