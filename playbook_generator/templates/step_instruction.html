@@ -4,11 +4,14 @@
       <div class="uk-margin uk-f uk-flex uk-flex-column">
       </div>
       <div class="uk-container">
-        <p>Ansible is used to deploy, audit and customize the cluster.</p>
-        <p>To run the corresponding Ansible playbook SSH to the Ansible server and copy/paste the command below:</p>
+        <p>1. Please copy the files in the links below to the <b>tmp</b> directory on the Ansible server.</p>
+        <a href="{{ uploaded_config.config_yml_file.url }}">{{ uploaded_config.config_yml_file.name }}</a>
+        <br><br>
+        <a href="{{ uploaded_config.config_json_file.url }}">{{ uploaded_config.config_json_file.name }}</a>
+        <p>2. After copying the files above please execute the Ansible Playbook using the comamnd below:</p>
         <div class="uk-comment-body">
             <div class="uk-margin">
-              <textarea class="terminal uk-textarea" rows="5" placeholder="Textarea" id="copy-text">ansible-playbook {{ nodes_path }} --extra-vars {{ uploaded_config.config_yml_file.path }} --tags "{{ uploaded_config.tag }}"</textarea>
+              <textarea class="terminal uk-textarea" rows="2" placeholder="Textarea" id="copy-text">ansible-playbook {{ nodes_path }} --extra-vars "@/tmp/{{ uploaded_config.config_yml_file.name }} --tags "{{ uploaded_config.tag }}"</textarea>
             </div>
         </div>
         <a class="uk-margin-small uk-button uk-button-default" id="copy_btn">Copy</a>
