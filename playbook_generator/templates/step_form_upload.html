@@ -3,7 +3,7 @@
   <form method="post" enctype="multipart/form-data" id="importForm">
     {% csrf_token %}
     <fieldset class="uk-fieldset">
-      <legend class="uk-legend">Create new config</legend>
+      <legend class="uk-legend">Upload Build Sheet</legend>
     </fieldset>
 {#    {% if 'vmware' in request.path  %}#}
 {#    <div class="uk-flex uk-flex-column uk-flex-center uk-flex-middle upload__form__container">#}
@@ -15,7 +15,7 @@
     <div class="uk-flex uk-flex-column uk-flex-center uk-flex-middle upload__form__container">
       <div class="uk-margin uk-flex uk-flex-column">
         <div class="uk-margin">
-          <label class="uk-form-label" for="form-stacked-text">Select the mode</label>
+          <label class="uk-form-label" for="form-stacked-text">Action:</label>
           <select class="tag-select uk-select" name="tags" required>
             {% for item in form.tags %}
               {{ item }}
@@ -25,7 +25,7 @@
         <div uk-form-custom="target: true">
             {{ form.uploaded_file }}
             <input class="uk-input uk-form-width-large {% if form.uploaded_file.errors %} uk-form-danger {% endif %}"
-                   type="text" placeholder="Select file">
+                   type="text" placeholder="Click Here to Select the Build Sheet">
           </div>
           {% for error in form.uploaded_file.errors %}
             <span class="color__error">{{ error }}</span>
