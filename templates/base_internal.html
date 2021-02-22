@@ -28,14 +28,14 @@
               <a href="{% url 'playbook_generator:playbook_step_upload' service_type='nutanix' %}"
                  class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
               >
-                Run new playbook
+                Parse Build Sheet
               </a>
             </li>
             <li>
               <a href="{% url 'playbook_generator:playbook_static_vars_form' service_type='nutanix' %}"
                  class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
               >
-                Static vars
+                Configure static vars
               </a>
             </li>
           </ul>
@@ -49,14 +49,14 @@
               <a href="{% url 'playbook_generator:playbook_step_upload' service_type='vmware' %}"
                  class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
               >
-                Run new playbook
+                Parse Build Sheet
               </a>
             </li>
             <li>
               <a href="{% url 'playbook_generator:playbook_static_vars_form' service_type='vmware' %}"
                  class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
               >
-                Static vars
+                Configure static vars
               </a>
             </li>
           </ul>
