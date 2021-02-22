@@ -5,7 +5,9 @@
     <form method="post" class="static-config__form" enctype="multipart/form-data" id="importForm">
       {% csrf_token %}
       <fieldset class="uk-fieldset uk-margin">
-        <legend class="uk-legend r">Change static vars for {{ service_type }}</legend>
+        <legend class="uk-legend r">Set Static Variables</legend>
+        <br>
+        Static variables should be used for any settings that will remain the same regardless of the buld sheet that is uploaded.
       </fieldset>
       <div class="uk-flex uk-flex-column uk-flex-center uk-flex-middle upload__form__container">
         <div id="form_set" class="uk-flex uk-flex-column">
