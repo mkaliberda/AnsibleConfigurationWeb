@@ -52,9 +52,11 @@ host all all ::1/128 md5 <br>
 
 ``ALTER DATABASE web_prod_db OWNER TO web_app;``
 
-Verify DB ownership with \l command
+Verify DB ownership : ``\l``
 
-``exit``
+Exit psql : ``\q``
+
+Exit back to your shell: ``exit``
 
 ## Setup Python Virtualenv
 
