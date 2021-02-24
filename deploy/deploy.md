@@ -1,8 +1,16 @@
 ## Code Deployment
 
-clone this project into `srv/folder`
+``cd /srv``
 
-Rename env_example to .env ``mv env_example .env``
+``sudo git clone`` this project
+
+Rename env_example to .env: ``sudo mv env_example .env``
+
+## Permissions
+
+Identify a user account that will be used to run the web app
+
+``sudo chown -R <username> /srv/<projectfolder>``
 
 ## Install Dependencies
 
@@ -82,6 +90,8 @@ cd to the project folder
 
 ``sudo mkdir /srv/static_root``
 
+``sudo chown -R <username> /srv/static_root``
+
 ``sudo chmod 777 /srv/static_root``
 
 ``sudo python manage.py sass static/styles/scss/ static/styles/css/`` # to compile stlyes
@@ -125,7 +135,9 @@ Use the following template and update [deploy/ansible-web.ini](./ansible-web.ini
  
 ## Setup nginx
 
-at ``/etc/nginx/conf.d/`` create file ``*.conf`` following template [deploy/nginx.conf](./nginx.conf)
+cd to ``/etc/nginx/conf.d/`` 
+
+Create or edit ``default.conf`` following template [deploy/nginx.conf](./nginx.conf)
 
 **IMPORTANT**
  
@@ -135,11 +147,11 @@ location /uploads/ {
   alias /srv/AnsibleConfigurationWeb/uploads/;
 }
 ```
-should be the same as ``PATH_UPLOAD_CONFIGS`` at .env file variables
+should be the same as ``PATH_UPLOAD_CONFIGS`` in .env file variables
 
-``sudo nginx -t`` to test 
-``sudo nginx`` to start
-``sudo nginx -s reload`` to restart
+``sudo nginx -t`` to test <br>
+``sudo nginx`` to start <br>
+``sudo nginx -s reload`` to restart <br>
 
 ## Troubleshooting
 
