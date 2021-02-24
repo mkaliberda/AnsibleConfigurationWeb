@@ -94,11 +94,25 @@ cd to the project folder
 
 Create an empty folder to store the socket file: ``mkdir ./venv/run``
 
+Create an empty folder for gunicorn logs: ``mkdir ./logs``
+
 cd to ``venv/bin/``
 
-Create file ``gunicorn_start`` following template [deploy/gunicorn_start](./gunicorn_start)
+Create file ``gunicorn_start`` 
 
-at the ``/etc/supervisord.d/`` create file ``ansible-web.ini`` following template [deploy/ansible-web.ini](./ansible-web.ini) 
+Use the following template and update DIR, USER and BIND lines: [deploy/gunicorn_start](./gunicorn_start)
+
+cd to``/etc/supervisord.d/`` 
+
+Create file ``ansible-web.ini`` 
+
+Use the following template and update [deploy/ansible-web.ini](./ansible-web.ini) 
+
+``sudo systemctl enable supervisord.service``
+
+``sudo systemctl enable supervisord``
+
+``sudo service supervisord start``
 
 ``sudo supervisorctl reread``
 
