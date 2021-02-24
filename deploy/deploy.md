@@ -58,13 +58,15 @@ Exit psql : ``\q``
 
 Exit back to your shell: ``exit``
 
+Reload psql: ``/usr/bin/pg_ctl reload``
+
 ## Setup .env configuration file
 
 ``sudo vi .env``
 
-Fill in the path for the Nutanix and VMware playbooks on the Ansible server.
-Fill in the database connection information
-Remove the comments in the DB section
+Fill in the path for the Nutanix and VMware playbooks on the Ansible server. <br>
+Fill in the database connection information - be careful with special characters in the password section <br>
+Remove the comments in the DB section <br>
 
 ## Setup Python Virtualenv
 
@@ -88,14 +90,13 @@ cd to the project folder
 
 ``sudo python manage.py migrate`` to create tables in the database
 
-``sudo python manage.py migrate`` to create tables in the database
-
 ## Setup gunicorn and supervisor
 
-create empty folder to store socket file
-``mkdir ./venv/run``
+Create an empty folder to store the socket file: ``mkdir ./venv/run``
 
-at the ``venv/bin/`` create file ``gunicorn_start`` following template [deploy/gunicorn_start](./gunicorn_start)
+cd to ``venv/bin/``
+
+Create file ``gunicorn_start`` following template [deploy/gunicorn_start](./gunicorn_start)
 
 at the ``/etc/supervisord.d/`` create file ``ansible-web.ini`` following template [deploy/ansible-web.ini](./ansible-web.ini) 
 
@@ -125,3 +126,7 @@ should be the same as ``PATH_UPLOAD_CONFIGS`` at .env file variables
 ``sudo nginx -t`` to test 
 ``sudo nginx`` to start
 ``sudo nginx -s reload`` to restart
+
+## Troubleshooting
+
+When trying to run migrate.py an Ident authentication error is generated - Be sure you didn't skip the step to reload psql after changing the configuration file (/usr/bin/pg_ctl reload).
