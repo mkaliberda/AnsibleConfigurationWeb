@@ -6,7 +6,7 @@ Rename env_example to .env ``mv env_example .env``
 
 ## Install Dependencies
 
-``yum install -y python3``
+``sudo yum install -y python3``
 
 ``sudo yum groupinstall 'Development Tools'``
 
@@ -58,9 +58,17 @@ Exit psql : ``\q``
 
 Exit back to your shell: ``exit``
 
+## Setup .env configuration file
+
+``sudo vi .env``
+
+Fill in the path for the Nutanix and VMware playbooks on the Ansible server.
+Fill in the database connection information
+Remove the comments in the DB section
+
 ## Setup Python Virtualenv
 
-``sudo apt-get -y install python-virtualenv``
+``sudo yum install -y install python-virtualenv``
 
 cd to the project folder
 
@@ -68,19 +76,19 @@ cd to the project folder
 
 ``source venv/bin/activate``
 
-``pip install -r requirements.txt``
+``sudo pip install -r requirements.txt``
 
 ``sudo mkdir /srv/static_root``
 
-``chmod 777 /srv/static_root``
+``sudo chmod 777 /srv/static_root``
 
-``python manage.py sass static/styles/scss/ static/styles/css/`` # to compile stlyes
+``sudo python manage.py sass static/styles/scss/ static/styles/css/`` # to compile stlyes
 
-``python manage.py collectstatic`` # to move static files to the static root
+``sudo python manage.py collectstatic`` # to move static files to the static root
 
-``python manage.py migrate`` to create tables in the database
+``sudo python manage.py migrate`` to create tables in the database
 
-``python manage.py migrate`` to create tables in the database
+``sudo python manage.py migrate`` to create tables in the database
 
 ## Setup gunicorn and supervisor
 
