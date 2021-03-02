@@ -121,10 +121,11 @@ class PlaybookInstructionStepViewForm(generic.TemplateView):
         self.uploaded_config = get_object_or_404(ConfigUpload,
                                                  uuid=kwargs.get("config_uuid"))
         self.nodes_path = settings.CONFIGS_PATH.get(kwargs.get('service_type')).get(self.uploaded_config.tag)
+        self.is_show_tags = self.uploaded_config.tag != ConfigUpload.DEPLOY
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        kwargs.update({ 'uploaded_config': self.uploaded_config, 'nodes_path': self.nodes_path })
+        kwargs.update({ 'uploaded_config': self.uploaded_config, 'nodes_path': self.nodes_path, 'is_show_tags': self.is_show_tags })
         return super().get_context_data(**kwargs)
 
 

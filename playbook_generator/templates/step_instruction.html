@@ -11,7 +11,7 @@
         <p>2. After copying the files above please continue to follow the runbook instructions. Reference the command below when instructed to by the runbook.</p>
         <div class="uk-comment-body">
             <div class="uk-margin">
-              <textarea class="terminal uk-textarea" rows="2" placeholder="Textarea" id="copy-text">ansible-playbook {{ nodes_path }} --extra-vars "@/tmp/{{ uploaded_config.config_yml_file.name }} --tags "{{ uploaded_config.tag }}"</textarea>
+              <textarea class="terminal uk-textarea" rows="2" placeholder="Textarea" id="copy-text"> ansible-playbook {{ nodes_path }} --extra-vars "@/tmp/{{ uploaded_config.config_yml_file.name }} {% if is_show_tags %} --tags "{{ uploaded_config.tag }}" {% endif %}</textarea>
             </div>
         </div>
         <a class="uk-margin-small uk-button uk-button-default" id="copy_btn">Copy</a>
