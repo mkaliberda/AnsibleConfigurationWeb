@@ -241,13 +241,13 @@ class VmWareParser():
             'is_to_playbook': True,
             'value': '',
         },
-
         'vlan_vm_name': {
             'name': 'vlan_vm_name',
             'group': VLAN_DATA,
             'is_to_playbook': True,
-            'is_default': True,
-            'value': '{{ vlan_vm_id }}-vmnetwork',
+            'is_default': False,
+            'value': '',
+            'format_methods': ['format_to_underscore', ],
         },
         'vlan_vm_id':  {
             'name': 'vlan_vm_id',
@@ -297,7 +297,6 @@ class VmWareParser():
             for inx in range(0, len(self.current_row(row_num))):
                 if inx > len(headers) - 1:
                     headers.append('')
-                print(inx, len(headers))
                 if not self.parsed_data.get(f"{headers[inx]}"):
                     continue
                 value = self.set_formating_data(self.parsed_data.get(f"{headers[inx]}"),
@@ -357,8 +356,6 @@ class VmWareParser():
         }
 
         def format_val(val):
-            if type(val) == bool:
-                return val
             return val
 
         for key, data in self.parsed_data.items():
@@ -412,5 +409,9 @@ class VmWareParser():
     @staticmethod
     def format_integer(value) -> str:
         return str(int(value))
+
+    @staticmethod
+    def format_to_underscore(value) -> str:
+        return value.replace('- ', '').replace(' ', '_')
 
 
