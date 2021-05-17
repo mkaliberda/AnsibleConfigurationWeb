@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'jsonfield',
     'jquery',
 
+    'sites',
     'playbook_generator',
 ]
 

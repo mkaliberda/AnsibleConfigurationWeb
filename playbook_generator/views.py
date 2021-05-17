@@ -11,8 +11,8 @@ from django.views import generic
 
 from playbook_generator.file_config_parsers import ParserFactory
 from playbook_generator.forms import FileUploadVarsPlaybookForm, PlaybookModeForm, StaticVarsValueModelForm
-from playbook_generator.models import PlaybookServiceTypes, StaticVarsValue
-from playbook_generator.models import ConfigUpload
+from playbook_generator.models import PlaybookServiceTypes, StaticVarsValue, ConfigUpload
+from sites.models import Site
 from utils import YamlLoader
 
 
@@ -67,14 +67,24 @@ class PlaybookUploadStepViewForm(generic.FormView):
         form = self.get_form(form_class)
 
         file = request.FILES.get('uploaded_file')
+        site_name = request.POST.get('site')
+
         service_type = kwargs.get('service_type')
         if form.is_valid():
             parser_class = ParserFactory(event_type=service_type).parser_class(file_contents=file.read())
             parser_class.parse_file()
 
+            if site_name:
+              site = Site.objects.get(name=site_name)
 
-            self.uploaded_config = ConfigUpload.objects.create(parsed_data=parser_class.parsed_data,
-                                                             tag=request.POST.get('tags'))
+            self.uploaded_config, created = ConfigUpload.objects.update_or_create(
+              tag=request.POST.get('tags'),
+              site=site,
+              defaults={
+                'parsed_data': parser_class.parsed_data,
+              }
+            )
+            print(self.uploaded_config, created)
 
             self.uploaded_config.config_json_file.save(
                 f"upload_{int(timezone.now().timestamp())}.json",
@@ -149,9 +159,7 @@ class PlaybookStaticVarsForm(generic.FormView):
     def post(self, request, *args, **kwargs):
         formset = self.get_form_class()
         forms = formset(request.POST)
-        print('cleaned_data', forms)
         for form in forms:
-            print('cleaned_data', form.cleaned_data, form.is_valid)
             if form.is_valid():
                 if form.cleaned_data.get('key') and form.cleaned_data.get('value'):
                     if form.cleaned_data.get('DELETE') and form.cleaned_data.get('id'):

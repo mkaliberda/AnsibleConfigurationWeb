@@ -1,0 +1,59 @@
+{% extends 'base_internal.html' %}
+
+{% block base_internal_html %}
+  <div class="playbook-form__card uk-card uk-card-default uk-card-body uk-width-1-1">
+    <div class="uk-flex uk-flex-middle uk-flex-center uk-margin">
+      <table class="uk-table uk-table-divider">
+        <caption>Sites</caption>
+        <thead>
+          <tr>
+            <th>Site</th>
+            <th>Yaml</th>
+            <th>Json</th>
+            <th>ViewConfig</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for site in sites %}
+            {% for config in site.configupload_set.all %}
+              {% if config.service_type == service_type %}
+                <tr>
+                  <td>{{ site.name }}</td>
+                  <td>
+                    <a target="_blank" href="{{config.config_yml_file.url}}">
+                      Yaml file
+                    </a>
+                  </td>
+                  <td>
+                    <a target="_blank" href="{{config.config_json_file.url}}">
+                      JSON file
+                    </a>
+                  </td>
+                  <td><a>View config</a></td>
+                  <td>
+                    <a
+                      href=""
+                      class="uk-icon-button uk-margin-small-right"
+                      uk-icon="file-edit"
+                      uk-tooltip="Edit"
+                    >
+                    </a>
+                    <a
+                      href=""
+                      uk-tooltip="Hello World"
+                      class="uk-icon-button uk-margin-small-right"
+                      uk-icon="trash"
+                      uk-tooltip="Delete" 
+                    >
+                    </a>
+                  </td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
