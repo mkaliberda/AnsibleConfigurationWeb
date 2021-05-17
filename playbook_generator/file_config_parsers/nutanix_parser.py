@@ -839,7 +839,7 @@ class NutanixParser():
             for inx, value in enumerate(self.current_row(row_num)):
                 if headers[inx]:
                     node_dict.update({
-                        headers[inx]: self.set_formating_data(NODE_VALUES.get(headers[inx]), value)
+                        headers[inx]: self.set_formating_data(self.parsed_data.get(headers[inx]), value)
                     })
                     if self.parsed_data.get(headers[inx]):
                         "set values to base dict"
@@ -924,11 +924,13 @@ class NutanixParser():
         return row_num
 
     def set_formating_data(self, item_obj, value):
+        # check if item has method vavidation
         if item_obj and item_obj.get('format_methods'):
             for method_key in item_obj.get('format_methods'):
                 format_method = self.__getattribute__(method_key)
                 if format_method:
                     value = format_method(value)
+            # print("set_formating_data", value)
         return value
 
     def parse_file(self):
@@ -1082,6 +1084,7 @@ class NutanixParser():
                 else:
                     json_dict.update({ change_key(key): self.format_val(value, key) })
             if key == 'nodes':
+                # traverse 
                 for inx, (node_key, node_obj) in enumerate(data.items()):
                     node_dict = {}
                     if node_key == 'group':
