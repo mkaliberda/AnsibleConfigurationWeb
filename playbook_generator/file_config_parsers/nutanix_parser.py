@@ -679,13 +679,13 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': 'PRISM-GLB-IM-AD',
         },
-        'foundation_server_ip': {
-            'group': DEFAULT,
-            'is_cluster_json': True,
-            'is_body_json': True,
-            'is_to_playbook': True,
-            'value': '10.195.54.77',
-        },
+        # 'foundation_server_ip': {
+        #     'group': DEFAULT,
+        #     'is_cluster_json': True,
+        #     'is_body_json': True,
+        #     'is_to_playbook': True,
+        #     'value': '10.195.54.77',
+        # },
         'foundation_server_port': {
             'group': DEFAULT,
             'is_cluster_json': True,
@@ -930,7 +930,6 @@ class NutanixParser():
                 format_method = self.__getattribute__(method_key)
                 if format_method:
                     value = format_method(value)
-            # print("set_formating_data", value)
         return value
 
     def parse_file(self):
@@ -941,7 +940,6 @@ class NutanixParser():
             else:
                 row_num += 1
         # method = self.__getattribute__('format_vlan_id')
-        # print(method('CJ (VLAN 102)'))
 
     @staticmethod
     def add_array(yml_dict, value_array, key):
