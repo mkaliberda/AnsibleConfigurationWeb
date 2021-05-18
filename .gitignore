@@ -1,4 +1,11 @@
 .env
-uploads
 .idea
 db.sqlite3
+*pyc
+venv
+upload
+start_data
+__pycache__
+.DS_Store
+.AppleDouble
+.LSOverride
