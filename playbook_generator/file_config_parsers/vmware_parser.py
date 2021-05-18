@@ -23,7 +23,7 @@ class VmWareParser():
 
     GROUPED_HEADING = {
         'Hostname': HOST_DATA,
-        'iLO Name': ILO_DATA,
+        'IPMI Name': ILO_DATA,
         'Network Label': VLAN_DATA,
         'Syslog Server': SYSLOG_SERVER_DATA,
         'NTP Server 1': NTP_SERVER,
@@ -45,9 +45,9 @@ class VmWareParser():
         },
         ILO_DATA: {
             # 'iLO Name': 'ilo_name',
-            'IP address': 'esxi_host_ilo_ip',
-            'Username': 'esxi_host_ilo_username',
-            'Password': 'esxi_host_ilo_pw',
+            'IP address': 'esxi_host_ipmi_ip',
+            'Username': 'esxi_host_ipmi_username',
+            'Password': 'esxi_host_ipmi_pw',
         },
         SYSLOG_SERVER_DATA: {
             'Syslog Server': 'syslog_hostname',
@@ -111,21 +111,20 @@ class VmWareParser():
             'format_methods': ['format_vlan_id', 'format_filter_to_digits_only', 'format_integer'],
         },
 
-        'esxi_host_ilo_ip': {
-            'name': 'esxi_host_ilo_ip',
+        'esxi_host_ipmi_ip': {
+            'name': 'esxi_host_ipmi_ip',
             'group': ILO_DATA,
             'is_to_playbook': True,
             'value': '',
         },
-        'esxi_host_ilo_username': {
-            'name': 'esxi_host_ilo_username',
+        'esxi_host_ipmi_username': {
+            'name': 'esxi_host_ipmi_username',
             'group': ILO_DATA,
             'is_to_playbook': True,
             'value': '',
         },
-
-        'esxi_host_ilo_pw': {
-            'name': 'esxi_host_ilo_pw',
+        'esxi_host_ipmi_pw': {
+            'name': 'esxi_host_ipmi_pw',
             'group': ILO_DATA,
             'is_to_playbook': True,
             'value': '',
