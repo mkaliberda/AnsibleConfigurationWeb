@@ -281,6 +281,10 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': [],
         },
+        'total_cluster_nodes': {
+            'is_to_playbook': True,
+            'value': 0,
+        },
         'nodes': {
             'group': NODES,
         },
@@ -845,6 +849,7 @@ class NutanixParser():
                         "set values to base dict"
                         self.set_value_to_parsed_data(col_num=inx, row_num=row_num, item_key=headers[inx])
             if node_dict:
+                self.parsed_data['total_cluster_nodes']['value'] += 1
                 node_dict.update(DEFAULT_VALUES)
                 if node_dict.get(NODE_KEY) not in self.parsed_data[self.NODES]:
                     self.parsed_data[self.NODES][node_dict.get(NODE_KEY)] = node_dict
