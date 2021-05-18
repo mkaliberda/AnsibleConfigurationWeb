@@ -103,7 +103,7 @@ class NutanixParser():
             'Storage Pool Name': 'storage_pool_name',
             'Compression': 'storage_compression_enabled',
             'Compression Delay': 'storage_compression_delay',
-            'Deduplication': 'storage_deduplication',
+            #'Deduplication': 'storage_deduplication',
             'Container Name(s)': 'storage_container_name',
         },
         SMTP: {
@@ -418,11 +418,11 @@ class NutanixParser():
             'value': '0',
             'format_methods': ['format_integer'],
         },
-        'storage_deduplication': {
-            'group': STORAGE,
-            'is_to_playbook': False,
-            'value': '',
-        },
+        # 'storage_deduplication': {
+        #     'group': STORAGE,
+        #     'is_to_playbook': False,
+        #     'value': '',
+        # },
         'storage_container_name': {
             'group': STORAGE,
             'is_to_playbook': True,
