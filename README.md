@@ -1,6 +1,7 @@
 # VMClusterAutomation-WebFrontEnd
 
 #### To deploy please look at [how to deploy](./deploy/deploy.md)
+#### To update code on an existing server please look at [how to update](./deploy/update.md)
 #### for local use
 If you are using ``python-virtualen``:
  
