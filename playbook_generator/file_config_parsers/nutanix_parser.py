@@ -674,7 +674,7 @@ class NutanixParser():
             'is_cluster_json': True,
             'is_body_json': True,
             'is_to_playbook': True,
-            'value': 'USER',
+            'value': 'GROUP',
         },
         'role_entityValues': {
             'group': DEFAULT,
