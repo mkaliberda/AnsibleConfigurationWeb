@@ -40,7 +40,7 @@
 
 3. Run the following commands to update and restart the Web Server
 
-``APP_PATH=/srv/static_root/vmclusterautomation-webfrontend/``
+``APP_PATH=/srv/vmclusterautomation-webfrontend/``
 
 ``yes | $APP_PATH/venv/bin/python manage.py migrate``
 
