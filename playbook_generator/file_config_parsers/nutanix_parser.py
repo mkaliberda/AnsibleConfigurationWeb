@@ -13,8 +13,7 @@ GROUPED_HEADING = {
 }
 
 
-class NutanixParser():
-    __wbook = None
+class NutanixParser:
     CLUSTER_CONFIGURATION = 'cluster_configuration'
     CLUSTER_NETWORKING = 'cluster_networking'
     NODES = 'nodes'
@@ -126,7 +125,7 @@ class NutanixParser():
         }
     }
 
-    parsed_data = {
+    PARSED_DATA = {
         # Cluster Networking
         'cvm_netmask': {
             'name': 'Controller (CVM) – Subnet Mask',
@@ -745,6 +744,10 @@ class NutanixParser():
     """
 
     def __init__(self, file_contents=None, file_path=None, index_sheet=0):
+        # copy default data
+        self.parsed_data = { }
+        for key, val in self.PARSED_DATA.items():
+            self.parsed_data[key] = { **val }
         if file_contents:
             self.__wbook = xlrd.open_workbook(file_contents=file_contents)
         else:
