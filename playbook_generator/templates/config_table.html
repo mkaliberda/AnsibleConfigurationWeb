@@ -1,0 +1,65 @@
+{% extends 'base_internal.html' %}
+
+{% block base_internal_html %}
+  <div class="playbook-form__card uk-card uk-card-default uk-card-body uk-width-1-1">
+    <div class="uk-flex uk-flex-middle uk-flex-center uk-margin">
+      <table class="uk-table uk-table-divider">
+        <thead>
+          <tr>
+            <th>Site</th>
+            <th>Yaml</th>
+            <th>Json</th>
+            <th>ViewConfig</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for config in configs %}
+              <tr>
+                <td>{{ config.site.name }}</td>
+                <td>
+                  <a target="_blank" href="{{config.config_yml_file.url}}">
+                    Yaml file
+                  </a>
+                </td>
+                <td>
+                  <a target="_blank" href="{{config.config_json_file.url}}">
+                    JSON file
+                  </a>
+                </td>
+                <td>
+                  <a
+                    href="{% url 'playbook_generator:config_details_view' service_type=service_type uuid=config.uuid %}"
+                  >
+                    View config
+                  </a>
+                </td>
+                <td>
+                  <a
+                    href="{% url 'playbook_generator:config_edit_view' service_type=service_type uuid=config.uuid %}"
+                    class="uk-icon-button uk-margin-small-right"
+                    uk-icon="file-edit"
+                    uk-tooltip="Edit"
+                  >
+                  </a>
+                  <a
+                    href="{% url 'playbook_generator:config_delete_confirm_view' service_type=service_type uuid=config.uuid %}"
+                    uk-tooltip="Delele config for {{ config.site.name }}"
+                    class="uk-icon-button uk-margin-small-right"
+                    uk-icon="trash"
+                    uk-tooltip="Delete"
+                  >
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if not configs %}
+      <div class="uk-flex uk-flex-middle uk-flex-center uk-margin">
+        No Data
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

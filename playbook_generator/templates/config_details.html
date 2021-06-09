@@ -1,0 +1,18 @@
+{% extends 'base_internal.html' %}
+{% block base_internal_html %}
+<div class="playbook-form__card uk-card uk-card-default uk-card-body uk-width-1-1">
+  <div class="uk-flex-column uk-flex-center">
+    <h3 class="color__heading uk-flex-center uk-text-center">Variable Review</h3>
+    <div class="uk-container uk-margin">
+      {% include "components/config_table.html" %}
+    </div>
+    <div class="uk-container uk-margin">
+      <a class="uk-button uk-button-default" href="javascript:history.back()">
+        Back to table
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block base_js %}
+{% endblock %}

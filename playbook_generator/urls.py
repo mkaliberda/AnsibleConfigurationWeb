@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.urls import path, include
 from playbook_generator.views import (PlaybookHomeView, PlaybookSelectTagViewForm, PlaybookUploadStepViewForm,
-                                      PlaybookReviewStepViewForm, PlaybookInstructionStepViewForm, PlaybookStaticVarsForm)
+                                      PlaybookReviewStepViewForm, PlaybookInstructionStepViewForm, PlaybookStaticVarsForm,
+                                      ListConfigsView, ConfigsDetailsView, ConfigDeleteView, ConfigEditView)
 
 
 urlpatterns = [
@@ -23,11 +24,19 @@ urlpatterns = [
     # path('playbook-form/<str:service_type>/step/select_tag/',
     #      PlaybookSelectTagViewForm.as_view(), name='playbook_step_select_tag'),
     path('playbook-form/<str:service_type>/step/upload/',
-         PlaybookUploadStepViewForm.as_view(), name='playbook_step_upload'),
+        PlaybookUploadStepViewForm.as_view(), name='playbook_step_upload'),
     path('playbook-form/<str:service_type>/step/review/<uuid:config_uuid>/',
-         PlaybookReviewStepViewForm.as_view(), name='playbook_step_review'),
+        PlaybookReviewStepViewForm.as_view(), name='playbook_step_review'),
     path('playbook-form/<str:service_type>/step/instruction/<uuid:config_uuid>/',
-         PlaybookInstructionStepViewForm.as_view(), name='playbook_step_instruction'),
+        PlaybookInstructionStepViewForm.as_view(), name='playbook_step_instruction'),
     path('playbook-static-vars-form/<str:service_type>/',
-             PlaybookStaticVarsForm.as_view(), name='playbook_static_vars_form'),
+        PlaybookStaticVarsForm.as_view(), name='playbook_static_vars_form'),
+    path('configs/<str:service_type>/',
+        ListConfigsView.as_view(), name='config_list_view'),
+    path('config-details/<str:service_type>/<uuid:uuid>/',
+        ConfigsDetailsView.as_view(), name='config_details_view'),
+    path('config-confirm-delete/<str:service_type>/<uuid:uuid>/',
+        ConfigDeleteView.as_view(), name='config_delete_confirm_view',),
+    path('config-edit/<str:service_type>/<uuid:uuid>/',
+        ConfigEditView.as_view(), name='config_edit_view',),
 ]

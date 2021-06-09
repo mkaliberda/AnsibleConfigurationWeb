@@ -1,0 +1,68 @@
+{% extends 'base_internal.html' %}
+{% load custom_tags %}
+{% block base_internal_html %}
+<div class="playbook-form__card uk-card uk-card-default uk-card-body uk-width-1-1">
+  <div class="uk-flex-column uk-flex-center">
+    <h3 class="color__heading uk-flex-center uk-text-center">Variable Review</h3>
+    <div class="uk-container uk-margin">
+      <form method="post" enctype="multipart/form-data" id="importForm">
+      {% csrf_token %}
+      <table class="review-vars__table uk-table uk-table-divider uk-table-small uk-table-justify">
+        <thead>
+          <tr>
+            <th class="color__heading">Var key</th>
+            <th class="color__heading uk-table-expand">Var value</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key, value in uploaded_config.parsed_data.items %}
+            {% if key == 'nodes' %}
+              {% for node_key, node_value in value.items  %}
+                {% if node_key != 'group' %}
+                  <thead>
+                    <tr>
+                      <th class="color__heading">Node {{ forloop.counter0 }}</th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                    <tr></tr>
+                  </thead>
+                  {% for obj_key, obj_value in node_value.items %}
+                    {% if obj_key not in not_display_key %}
+                      <tr>
+                        <td></td>
+                        <td>{{ obj_key }}</td>
+                        <td>
+                          <textarea class="uk-textarea" type="text" name="{{ key }}">{{ obj_value|safe }}</textarea>
+                        </td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td>{{ key }}</td>
+                <td>
+                  <textarea class="uk-textarea" type="text" name="{{ key }}">{{ value.value|safe }}</textarea>
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="uk-container uk-margin">
+        <div class="uk-flex">
+          <button class="uk-margin-small uk-button uk-button-primary">
+            Save
+          </button>
+        </div>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block base_js %}
+{% endblock %}
