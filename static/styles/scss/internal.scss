@@ -26,6 +26,10 @@
     .uk-parent {
       margin-left: 1rem;
       padding: 0.5rem;
+      &.setings-nav {
+        margin: 0;
+        padding: 0!important;
+      }
     }
     .uk-nav-sub {
       .uk-active {
@@ -66,6 +70,13 @@
   }
   .upload__form__container {
     min-height: 40vh;
+  }
+  .create-btn {
+    position: absolute;
+    margin-left: 1rem;
+    color: $heading__color;
+    border: 1px solid $heading__color;
+    background-color: $hover__color;
   }
 }
 

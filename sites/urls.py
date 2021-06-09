@@ -14,9 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include
-from sites.views import SitesListConfigsView
+from sites.views import SitesListView, SitesCreateEditForm, SiteDeleteView
 
 
 urlpatterns = [
-    path('list/configs/<str:service_type>/', SitesListConfigsView.as_view(), name='site_list_view'),
+    path('create/<str:service_type>/', SitesCreateEditForm.as_view(), name='site_create_form'),
+    path('delete-confirm/<uuid:uuid>/', SiteDeleteView.as_view(), name='site_delete_confirm_form'),
+    path('list/<str:service_type>/', SitesListView.as_view(), name='site_list_view'),
 ]

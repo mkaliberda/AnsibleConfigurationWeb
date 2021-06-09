@@ -29,6 +29,11 @@
   padding: 0.5rem;
 }
 
+.internal-wrapper aside .uk-parent.setings-nav {
+  margin: 0;
+  padding: 0 !important;
+}
+
 .internal-wrapper aside .uk-nav-sub .uk-active {
   font-weight: 700;
 }
@@ -73,6 +78,14 @@
 
 .playbook-form__card .upload__form__container {
   min-height: 40vh;
+}
+
+.playbook-form__card .create-btn {
+  position: absolute;
+  margin-left: 1rem;
+  color: rgba(28, 92, 146, 0.9);
+  border: 1px solid rgba(28, 92, 146, 0.9);
+  background-color: #ffff;
 }
 
 .review-vars__table.uk-table-small td, .review-vars__table.uk-table-small th {
