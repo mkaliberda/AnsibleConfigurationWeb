@@ -13,6 +13,6 @@ class StaticVarsFile(BaseModel):
 
 
 class StaticVarsValue(BaseModel):
-  service_type = models.CharField(choices=PlaybookServiceTypes.choices(), max_length=64, blank=True, null=True)
-  key = models.CharField(max_length=64, blank=True, null=True)
-  value = models.CharField(max_length=300, blank=True, null=True)
+    service_type = models.CharField(choices=PlaybookServiceTypes.choices(), max_length=64, blank=True, null=True)
+    key = models.CharField(max_length=64, blank=True, null=True)
+    value = models.CharField(max_length=300, blank=True, null=True)

@@ -1,0 +1,53 @@
+{% extends 'base_internal.html' %}
+
+{% block base_internal_html %}
+  <div class="playbook-form__card uk-card uk-card-default uk-card-body uk-width-1-1">
+    <div class="uk-flex uk-margin">
+      <a
+        href={% url 'sites:site_create_form' service_type=service_type %}
+        class="uk-button uk-button-primary"
+      >
+        Create new site
+      </a>
+    </div>
+    <div class="uk-flex uk-flex-middle uk-flex-center uk-margin">
+      <table class="uk-table uk-table-divider">
+        <caption>Sites</caption>
+        <thead>
+          <tr>
+            <th>Site</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for site in sites %}
+              {% if site.service_type == service_type %}
+                <tr>
+                  <td>{{ site.name }}</td>
+                  <td>
+                    {% comment %}
+                      <a
+                        href=""
+                        class="uk-icon-button uk-margin-small-right"
+                        uk-icon="file-edit"
+                        uk-tooltip="Edit"
+                      >
+                      </a>
+                    {% endcomment %}
+                    <a
+                      href="{% url 'sites:site_delete_confirm_form' uuid=site.uuid %}"
+                      uk-tooltip="Delete {{site.name}}"
+                      class="uk-icon-button uk-margin-small-right"
+                      uk-icon="trash"
+                      uk-tooltip="Delete" 
+                    >
+                    </a>
+                  </td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

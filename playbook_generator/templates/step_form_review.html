@@ -6,55 +6,7 @@
     <div class="uk-container">
       <h3 class="color__heading">Variable Review</h3>
       <h4 style="color:red">Failure to review the variables below could lead to interruptions in service or loss of data!</h4>
-      <table class="review-vars__table uk-table uk-table-divider uk-table-small uk-table-justify">
-      <thead>
-        <tr>
-          <th class="color__heading">Var key</th>
-          <th class="color__heading">Var value</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for key, value in uploaded_config.parsed_data.items %}
-          {% if key == 'nodes' %}
-            {% for node_key, node_value in value.items  %}
-              {% if node_key != 'group' %}
-                <thead>
-                  <tr>
-                    <th class="color__heading">Node {{ forloop.counter0 }}</th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                  <tr></tr>
-                </thead>
-                {% for obj_key, obj_value in node_value.items %}
-                  {% if obj_key not in not_display_key %}
-                    <tr>
-                      <td></td>
-                      <td>{{ obj_key }}</td>
-                      <td>{{ obj_value }}</td>
-                    </tr>
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-            {% endfor %}
-          {% else %}
-            {% if key not in not_display_key %}
-            <tr>
-              <td>{{ key }}</td>
-              <td>{{ value.value }}</td>
-              <td></td>
-            </tr>
-            {% endif %}
-          {% endif %}
-        {% endfor %}
-      </tbody>
-      <thead>
-        <tr>
-          <th>Var key</th>
-          <th>Var value</th>
-        </tr>
-      </thead>
+      {% include "components/config_table.html" %}
     </table>
     </div>
     <div class="uk-container uk-margin">

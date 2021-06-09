@@ -19,11 +19,11 @@
   <div class="internal-wrapper">
     <aside>
       <ul class="uk-nav-default uk-nav-parent-icon left-navbar" uk-nav>
-        <li class="uk-parent {% if 'nutanix' in request.path  %} uk-open {% endif %}">
+        <li class="uk-parent {% if 'nutanix' in request.path %} uk-open {% endif %}">
           <a href="#" class="img__link">
             <img src="{% static 'img/service_logo_nutanix.png' %}"> NUTANIX
           </a>
-          <ul class="uk-nav-sub">
+          <ul class="uk-nav-sub uk-nav-parent-icon" uk-nav="multiple: true">
             <li>
               <a href="{% url 'playbook_generator:playbook_step_upload' service_type='nutanix' %}"
                  class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
@@ -31,11 +31,36 @@
                 Parse Build Sheet
               </a>
             </li>
+            {% comment %} <li class="uk-parent setings-nav">
+              <a href="#">Settings</a>
+              <ul class="uk-nav-sub">
+                  <li>
+                    <a href="#">Sub item</a>
+                  </li>
+                  <li>
+                    <a href="#">Sub item</a>
+                  </li>
+              </ul>
+            </li> {% endcomment %}
             <li>
               <a href="{% url 'playbook_generator:playbook_static_vars_form' service_type='nutanix' %}"
-                 class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
+                 class="{% if 'playbook-static-vars-form' in request.path  %}uk-active{% endif %}"
               >
                 Configure static vars
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'playbook_generator:config_list_view' service_type='nutanix' %}"
+                 class="{% if 'list/configs' in request.path  %}uk-active{% endif %}"
+              >
+                Uploaded Configs
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'sites:site_list_view' service_type='nutanix' %}"
+                 class="{% if 'sites/list' in request.path  %}uk-active{% endif %}"
+              >
+                Sites
               </a>
             </li>
           </ul>
@@ -54,9 +79,16 @@
             </li>
             <li>
               <a href="{% url 'playbook_generator:playbook_static_vars_form' service_type='vmware' %}"
-                 class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
+                 class="{% if 'playbook-static-vars-form' in request.path  %}uk-active{% endif %}"
               >
                 Configure static vars
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'playbook_generator:config_list_view' service_type='vmware' %}"
+                 class="{% if 'list/configs' in request.path  %}uk-active{% endif %}"
+              >
+                Uploaded Configs
               </a>
             </li>
           </ul>

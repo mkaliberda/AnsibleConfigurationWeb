@@ -4,6 +4,7 @@ import json
 from django.forms import formset_factory, modelformset_factory
 from django.conf import settings
 from django.utils import timezone
+from django.http import HttpResponseRedirect
 from django.core.files.base import ContentFile
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -11,8 +12,8 @@ from django.views import generic
 
 from playbook_generator.file_config_parsers import ParserFactory
 from playbook_generator.forms import FileUploadVarsPlaybookForm, PlaybookModeForm, StaticVarsValueModelForm
-from playbook_generator.models import PlaybookServiceTypes, StaticVarsValue
-from playbook_generator.models import ConfigUpload
+from playbook_generator.models import PlaybookServiceTypes, StaticVarsValue, ConfigUpload
+from sites.models import Site
 from utils import YamlLoader
 
 
@@ -58,24 +59,40 @@ class PlaybookUploadStepViewForm(generic.FormView):
                        kwargs={'service_type': self.kwargs.get('service_type'),
                                'config_uuid': self.uploaded_config.uuid})
 
-    # def dispatch(self, request, *args, **kwargs):
-    #     self.uploaded_config = get_object_or_404(ConfigUpload, uuid=kwargs.get("config_uuid"))
-    #     return super().dispatch(request, *args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        self.service_type = kwargs.get('service_type')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form(self, form_class=None, service_type=None):
+        """Return an instance of the form to be used in this view."""
+        if service_type is None:
+            service_type = self.service_type
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(**self.get_form_kwargs(), service_type=service_type)
 
     def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-
-        file = request.FILES.get('uploaded_file')
         service_type = kwargs.get('service_type')
+        form_class = self.get_form_class()
+        form = self.get_form(form_class, service_type=service_type)
+        file = request.FILES.get('uploaded_file')
+        site_name = request.POST.get('site')
+
         if form.is_valid():
             parser_class = ParserFactory(event_type=service_type).parser_class(file_contents=file.read())
             parser_class.parse_file()
 
+            if site_name:
+                site = Site.objects.get(name=site_name, service_type=service_type)
 
-            self.uploaded_config = ConfigUpload.objects.create(
-                parsed_data=parser_class.parsed_data,
-                tag=request.POST.get('tags'),
+            self.uploaded_config, created = ConfigUpload.objects.update_or_create(
+              tag=request.POST.get('tags'),
+              site=site,
+              service_type=service_type,
+              defaults={
+                'parsed_data': parser_class.parsed_data,
+              }
+
             )
 
             self.uploaded_config.config_json_file.save(
@@ -172,3 +189,95 @@ class PlaybookStaticVarsForm(generic.FormView):
                             defaults={ 'value': form.cleaned_data.get('value') }
                         )
         return redirect(to=self.get_success_url())
+
+
+class ConfigsDetailsView(generic.TemplateView):
+    template_name = 'config_details.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.uploaded_config = get_object_or_404(ConfigUpload, uuid=kwargs.get("uuid"))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        not_display_key = []
+        kwargs.update({
+            'uploaded_config': self.uploaded_config,
+            'not_display_key': not_display_key,
+        })
+        return super().get_context_data(**kwargs)
+
+
+class ConfigEditView(generic.TemplateView):
+    template_name = 'config_edit.html'
+
+    def get_success_url(self):
+        return reverse(
+            'playbook_generator:config_edit_view',
+            kwargs={
+                'service_type': self.kwargs.get('service_type'),
+                'uuid': self.kwargs.get("uuid"),
+            }
+        )
+
+    def dispatch(self, request, *args, **kwargs):
+        self.uploaded_config = get_object_or_404(ConfigUpload, uuid=kwargs.get("uuid"))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        kwargs.update({
+            'uploaded_config': self.uploaded_config,
+            'not_display_key': [],
+        })
+        return super().get_context_data(**kwargs)
+
+    def post(self, request, *args, **kwargs):
+        print(request.POST)
+        return redirect(to=self.get_success_url())
+
+
+class ConfigDeleteView(generic.DeleteView):
+    template_name = 'components/form_delete_confirm.html'
+
+    def get_success_url(self):
+        self.success_url = reverse('playbook_generator:config_list_view',
+                                   kwargs={'service_type': self.object.service_type})
+        return super().get_success_url()
+
+    def get_object(self, queryset=None):
+        configObj = get_object_or_404(ConfigUpload, uuid=self.kwargs.get("uuid"))
+        return configObj
+
+    def get_context_data(self, **kwargs):
+        not_display_key = []
+        configObj = self.get_object()
+        kwargs.update({
+            'warning_text': f"Uploaded config for site {configObj.site.name} will be deleted. Are you sure?",
+        })
+        return super().get_context_data(**kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """
+        Call the delete() method on the fetched object and then redirect to the
+        success URL.
+        """
+        self.object = ConfigUpload.objects.get(uuid=self.kwargs.get("uuid"))
+        if request.POST.get('confirm_delete', None):
+            self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
+
+class ListConfigsView(generic.ListView):
+    model = ConfigUpload
+    queryset = ConfigUpload.objects.all()
+    template_name = 'config_table.html'
+    context_object_name = 'configs'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.service_type = kwargs.get("service_type")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return super().get_queryset().filter(service_type=self.service_type)
+
+    def get_context_data(self, **kwargs):
+        kwargs.update({ 'service_type': self.service_type })
+        return super().get_context_data(**kwargs)

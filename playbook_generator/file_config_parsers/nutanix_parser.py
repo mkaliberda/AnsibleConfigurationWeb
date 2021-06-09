@@ -750,7 +750,7 @@ class NutanixParser:
             self.parsed_data[key] = { **val }
         if file_contents:
             self.__wbook = xlrd.open_workbook(file_contents=file_contents)
-        else:
+        elif file_path:
             self.__wbook = xlrd.open_workbook(filename=file_path)
         self.sheet = self.__wbook.sheet_by_index(index_sheet)
         # add static vars
