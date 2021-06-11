@@ -28,17 +28,19 @@
                     </tr>
                     <tr></tr>
                   </thead>
+                  {% with parent_ind=forloop.counter0 %}
                   {% for obj_key, obj_value in node_value.items %}
                     {% if obj_key not in not_display_key %}
                       <tr>
                         <td></td>
                         <td>{{ obj_key }}</td>
                         <td>
-                          <textarea class="uk-textarea" type="text" name="{{ key }}">{{ obj_value|safe }}</textarea>
+                          <textarea class="uk-textarea" type="text" name="node{{parent_ind}}_{{obj_key}}">{{ obj_value|safe }}</textarea>
                         </td>
                       </tr>
                     {% endif %}
                   {% endfor %}
+                {% endwith %}
                 {% endif %}
               {% endfor %}
             {% else %}
