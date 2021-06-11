@@ -100,6 +100,8 @@ cd to the project folder
 
 ``sudo python manage.py migrate`` to create tables in the database
 
+``python manage.py loaddata playbook_generator/fixtures/prod_static_vart.json`` to load static values to the database
+
 ## Setup gunicorn and supervisor
 
 Create an empty folder to store the socket file: ``mkdir ./venv/run``

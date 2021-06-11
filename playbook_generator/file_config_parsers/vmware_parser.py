@@ -14,6 +14,7 @@ GROUPED_HEADING = {
 class VmWareParser():
     __wbook = None
     HOST_DATA = 'host_data'
+    VCENTER_DATA = 'vcenter_address'
     ILO_DATA = 'user_data'
     VLAN_DATA = 'Network Label'
     SYSLOG_SERVER_DATA = 'Syslog Server'
@@ -23,7 +24,8 @@ class VmWareParser():
 
     GROUPED_HEADING = {
         'Hostname': HOST_DATA,
-        'iLO Name': ILO_DATA,
+        'VCENTER': VCENTER_DATA,
+        'IPMI Name': ILO_DATA,
         'Network Label': VLAN_DATA,
         'Syslog Server': SYSLOG_SERVER_DATA,
         'NTP Server 1': NTP_SERVER,
@@ -31,7 +33,7 @@ class VmWareParser():
     }
 
     GROUPED_KEYS = {
-        HOST_DATA : {
+        HOST_DATA: {
             'Hostname': 'esxi_host_name',
             'VLAN': 'esxi_host_mgmt_vlan_id',
             'IP address': 'esxi_host_mgmt_ip',
@@ -39,15 +41,18 @@ class VmWareParser():
             'Gateway': 'esxi_host_mgmt_gw',
             'Preferred DNS': 'dns_server_1',
             'Alternate DNS': 'dns_server_2',
+        },
+        VCENTER_DATA: {
             'VCENTER': 'vcenter_address',
             'DataCenter Folder': 'country',
+            'City Folder': 'city_folder',
             'Datacenter': 'dc_name',
         },
         ILO_DATA: {
             # 'iLO Name': 'ilo_name',
-            'IP address': 'esxi_host_ilo_ip',
-            'Username': 'esxi_host_ilo_username',
-            'Password': 'esxi_host_ilo_pw',
+            'IP address': 'esxi_host_ipmi_ip',
+            'Username': 'esxi_host_ipmi_username',
+            'Password': 'esxi_host_ipmi_pw',
         },
         SYSLOG_SERVER_DATA: {
             'Syslog Server': 'syslog_hostname',
@@ -73,7 +78,7 @@ class VmWareParser():
     """
         parsed_data values with all possible values with additional configs 
     """
-    parsed_data = {
+    PARSED_DATA = {
         # keys in order
         'esxi_host_name': {
             'name': 'esxi_host_name',
@@ -111,21 +116,20 @@ class VmWareParser():
             'format_methods': ['format_vlan_id', 'format_filter_to_digits_only', 'format_integer'],
         },
 
-        'esxi_host_ilo_ip': {
-            'name': 'esxi_host_ilo_ip',
+        'esxi_host_ipmi_ip': {
+            'name': 'esxi_host_ipmi_ip',
             'group': ILO_DATA,
             'is_to_playbook': True,
             'value': '',
         },
-        'esxi_host_ilo_username': {
-            'name': 'esxi_host_ilo_username',
+        'esxi_host_ipmi_username': {
+            'name': 'esxi_host_ipmi_username',
             'group': ILO_DATA,
             'is_to_playbook': True,
             'value': '',
         },
-
-        'esxi_host_ilo_pw': {
-            'name': 'esxi_host_ilo_pw',
+        'esxi_host_ipmi_pw': {
+            'name': 'esxi_host_ipmi_pw',
             'group': ILO_DATA,
             'is_to_playbook': True,
             'value': '',
@@ -138,25 +142,6 @@ class VmWareParser():
             'group': HOST_DATA,
             'is_to_playbook': True,
             'value': '{{ esxi_host_name }}-local',
-        },
-
-        'vcenter_address': {
-            'name': 'vcenter_address',
-            'group': HOST_DATA,
-            'is_to_playbook': True,
-            'value': '',
-        },
-        'country': {
-            'name': 'country',
-            'group': HOST_DATA,
-            'is_to_playbook': True,
-            'value': '',
-        },
-        'dc_name': {
-            'name': 'dc_name',
-            'group': HOST_DATA,
-            'is_to_playbook': True,
-            'value': '',
         },
 
         'dns_server_1': {
@@ -177,6 +162,32 @@ class VmWareParser():
             'group': HOST_DATA,
             'is_to_playbook': True,
             'value': ["{{ dns_server_1 }}", "{{ dns_server_2 }}"],
+        },
+
+        # VCENTER_DATA
+        'vcenter_address': {
+            'name': 'vcenter_address',
+            'group': VCENTER_DATA,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'country': {
+            'name': 'country',
+            'group': VCENTER_DATA,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'city_folder': {
+            'name': 'city_folder',
+            'group': VCENTER_DATA,
+            'is_to_playbook': True,
+            'value': '',
+        },
+        'dc_name': {
+            'name': 'dc_name',
+            'group': VCENTER_DATA,
+            'is_to_playbook': True,
+            'value': '',
         },
 
         # NTP Server
@@ -259,6 +270,9 @@ class VmWareParser():
     }
 
     def __init__(self, file_contents=None, file_path=None, index_sheet=0):
+        self.parsed_data = {}
+        for key in self.PARSED_DATA.keys():
+            self.parsed_data[key] = self.PARSED_DATA[key].copy()
         if file_contents:
             self.__wbook = xlrd.open_workbook(file_contents=file_contents)
         else:
@@ -317,6 +331,8 @@ class VmWareParser():
         """
         grouped_heading = self.get_grouped_heading(self.current_row(row_num)[0])
         if grouped_heading == self.HOST_DATA:
+            row_num = self.parse_heading_table(row_num, grouped_heading)
+        if grouped_heading == self.VCENTER_DATA:
             row_num = self.parse_heading_table(row_num, grouped_heading)
         if grouped_heading == self.ILO_DATA:
             row_num = self.parse_heading_table(row_num, grouped_heading)

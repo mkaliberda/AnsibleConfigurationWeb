@@ -92,6 +92,7 @@ class PlaybookUploadStepViewForm(generic.FormView):
               defaults={
                 'parsed_data': parser_class.parsed_data,
               }
+
             )
 
             self.uploaded_config.config_json_file.save(
@@ -99,7 +100,8 @@ class PlaybookUploadStepViewForm(generic.FormView):
                 ContentFile(json.dumps(parser_class.get_json_dict(), indent=2))
             )
             yaml_loader = YamlLoader()
-            parsed_yaml = parser_class.get_yml_dict(self.uploaded_config.config_json_file.path)
+            json_name = self.uploaded_config.config_json_file.name.split('/')[-1]
+            parsed_yaml = parser_class.get_yml_dict(json_path=f"/tmp/{json_name}")
             self.uploaded_config.config_yml_file.save(
                 f"upload_{int(timezone.now().timestamp())}.yaml",
                 ContentFile(yaml_loader.yaml_dump(parsed_yaml)),

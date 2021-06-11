@@ -13,8 +13,7 @@ GROUPED_HEADING = {
 }
 
 
-class NutanixParser():
-    __wbook = None
+class NutanixParser:
     CLUSTER_CONFIGURATION = 'cluster_configuration'
     CLUSTER_NETWORKING = 'cluster_networking'
     NODES = 'nodes'
@@ -103,7 +102,7 @@ class NutanixParser():
             'Storage Pool Name': 'storage_pool_name',
             'Compression': 'storage_compression_enabled',
             'Compression Delay': 'storage_compression_delay',
-            'Deduplication': 'storage_deduplication',
+            #'Deduplication': 'storage_deduplication',
             'Container Name(s)': 'storage_container_name',
         },
         SMTP: {
@@ -126,7 +125,7 @@ class NutanixParser():
         }
     }
 
-    parsed_data = {
+    PARSED_DATA = {
         # Cluster Networking
         'cvm_netmask': {
             'name': 'Controller (CVM) – Subnet Mask',
@@ -281,6 +280,10 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': [],
         },
+        'total_cluster_nodes': {
+            'is_to_playbook': True,
+            'value': 0,
+        },
         'nodes': {
             'group': NODES,
         },
@@ -418,11 +421,11 @@ class NutanixParser():
             'value': '0',
             'format_methods': ['format_integer'],
         },
-        'storage_deduplication': {
-            'group': STORAGE,
-            'is_to_playbook': False,
-            'value': '',
-        },
+        # 'storage_deduplication': {
+        #     'group': STORAGE,
+        #     'is_to_playbook': False,
+        #     'value': '',
+        # },
         'storage_container_name': {
             'group': STORAGE,
             'is_to_playbook': True,
@@ -670,7 +673,7 @@ class NutanixParser():
             'is_cluster_json': True,
             'is_body_json': True,
             'is_to_playbook': True,
-            'value': 'USER',
+            'value': 'GROUP',
         },
         'role_entityValues': {
             'group': DEFAULT,
@@ -679,13 +682,13 @@ class NutanixParser():
             'is_to_playbook': True,
             'value': 'PRISM-GLB-IM-AD',
         },
-        'foundation_server_ip': {
-            'group': DEFAULT,
-            'is_cluster_json': True,
-            'is_body_json': True,
-            'is_to_playbook': True,
-            'value': '10.195.54.77',
-        },
+        # 'foundation_server_ip': {
+        #     'group': DEFAULT,
+        #     'is_cluster_json': True,
+        #     'is_body_json': True,
+        #     'is_to_playbook': True,
+        #     'value': '10.195.54.77',
+        # },
         'foundation_server_port': {
             'group': DEFAULT,
             'is_cluster_json': True,
@@ -741,6 +744,10 @@ class NutanixParser():
     """
 
     def __init__(self, file_contents=None, file_path=None, index_sheet=0):
+        # copy default data
+        self.parsed_data = { }
+        for key, val in self.PARSED_DATA.items():
+            self.parsed_data[key] = { **val }
         if file_contents:
             self.__wbook = xlrd.open_workbook(file_contents=file_contents)
         elif file_path:
@@ -839,12 +846,16 @@ class NutanixParser():
             for inx, value in enumerate(self.current_row(row_num)):
                 if headers[inx]:
                     node_dict.update({
-                        headers[inx]: self.set_formating_data(NODE_VALUES.get(headers[inx]), value)
+                        headers[inx]: self.set_formating_data(self.parsed_data.get(headers[inx]), value)
                     })
                     if self.parsed_data.get(headers[inx]):
                         "set values to base dict"
                         self.set_value_to_parsed_data(col_num=inx, row_num=row_num, item_key=headers[inx])
             if node_dict:
+                self.parsed_data['total_cluster_nodes']['value'] += 1
+                if self.parsed_data['total_cluster_nodes']['value'] > 2:
+                    # if count of node > 2 set N/A
+                    self.parsed_data['witness_address']['value'] = 'N/A'
                 node_dict.update(DEFAULT_VALUES)
                 if node_dict.get(NODE_KEY) not in self.parsed_data[self.NODES]:
                     self.parsed_data[self.NODES][node_dict.get(NODE_KEY)] = node_dict
@@ -924,6 +935,7 @@ class NutanixParser():
         return row_num
 
     def set_formating_data(self, item_obj, value):
+        # check if item has method vavidation
         if item_obj and item_obj.get('format_methods'):
             for method_key in item_obj.get('format_methods'):
                 format_method = self.__getattribute__(method_key)
@@ -939,7 +951,6 @@ class NutanixParser():
             else:
                 row_num += 1
         # method = self.__getattribute__('format_vlan_id')
-        # print(method('CJ (VLAN 102)'))
 
     @staticmethod
     def add_array(yml_dict, value_array, key):
@@ -1082,6 +1093,7 @@ class NutanixParser():
                 else:
                     json_dict.update({ change_key(key): self.format_val(value, key) })
             if key == 'nodes':
+                # traverse 
                 for inx, (node_key, node_obj) in enumerate(data.items()):
                     node_dict = {}
                     if node_key == 'group':
