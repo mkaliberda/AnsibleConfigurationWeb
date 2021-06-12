@@ -92,7 +92,6 @@ class PlaybookUploadStepViewForm(generic.FormView):
               defaults={
                 'parsed_data': parser_class.parsed_data,
               }
-
             )
 
             self.uploaded_config.config_json_file.save(
