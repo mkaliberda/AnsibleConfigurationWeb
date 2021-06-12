@@ -280,10 +280,6 @@ class NutanixParser:
             'is_to_playbook': True,
             'value': [],
         },
-        'total_cluster_nodes': {
-            'is_to_playbook': True,
-            'value': 0,
-        },
         'nodes': {
             'group': NODES,
         },
@@ -725,6 +721,15 @@ class NutanixParser:
             'is_to_playbook': True,
             'value': 'svc_sssyseng',
         },
+        # custom fields
+        'total_cluster_nodes': {
+            'is_to_playbook': True,
+            'value': 0,
+        },
+        'hypervisor_block_array': {
+            'is_to_playbook': True,
+            'value': [],
+        },
     }
     """
         hypervisor_iso - This sounds weird but it should be empty. Essentially, we need the JSON to read "hypervisor_iso": {}
@@ -851,6 +856,7 @@ class NutanixParser:
                     if self.parsed_data.get(headers[inx]):
                         "set values to base dict"
                         self.set_value_to_parsed_data(col_num=inx, row_num=row_num, item_key=headers[inx])
+            self.parsed_data['hypervisor_block_array']['value'].append(node_dict.get('block_id'))
             if node_dict:
                 self.parsed_data['total_cluster_nodes']['value'] += 1
                 if self.parsed_data['total_cluster_nodes']['value'] > 2:

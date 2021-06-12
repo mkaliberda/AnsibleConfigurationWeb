@@ -92,7 +92,6 @@ class PlaybookUploadStepViewForm(generic.FormView):
               defaults={
                 'parsed_data': parser_class.parsed_data,
               }
-
             )
 
             self.uploaded_config.config_json_file.save(
@@ -231,7 +230,21 @@ class ConfigEditView(generic.TemplateView):
         return super().get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
+        updated_parsed_data = {'nodes': {}}
+        for c_key, c_value in self.uploaded_config.parsed_data.items():
+            if c_key == 'nodes':
+                for node_index, (node_key, node_value) in enumerate(c_value.items()):
+                    if node_key == 'group':
+                        updated_parsed_data['nodes']['group'] = 'nodes'
+                    else:
+                        updated_parsed_data['nodes'][node_key] = {}
+                        for nv_key in node_value.keys():
+                            updated_parsed_data['nodes'][node_key][nv_key] = request.POST.get(f"node{node_index}_{nv_key}")
+            else:
+                updeted_data = self.uploaded_config.parsed_data.get(c_key)
+                updated_parsed_data[c_key] = { **updeted_data, 'value': request.POST.get(c_key)}
+        self.uploaded_config.parsed_data = updated_parsed_data
+        self.uploaded_config.save()
         return redirect(to=self.get_success_url())
 
 
