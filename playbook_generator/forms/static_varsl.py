@@ -7,7 +7,3 @@ class StaticVarsValueModelForm(forms.ModelForm):
     class Meta:
         model = StaticVarsValue
         fields = ('key', 'value',)
-
-
-
-

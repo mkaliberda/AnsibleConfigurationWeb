@@ -18,13 +18,35 @@
               <tr>
                 <td>{{ config.site.name }}</td>
                 <td>
-                  <a target="_blank" href="{{config.config_yml_file.url}}">
-                    Yaml file
+                  <a
+                    target="_blank"
+                    href="{% url 'playbook_generator:config_yaml_file_view' service_type=service_type uuid=config.uuid %}"
+                  >
+                    View Yaml file
+                  </a>
+                  /
+                  <a
+                    target="_blank"
+                    download
+                    href="{% url 'playbook_generator:config_yaml_file_view' service_type=service_type uuid=config.uuid %}"
+                  >
+                    Download Yaml file
                   </a>
                 </td>
                 <td>
-                  <a target="_blank" href="{{config.config_json_file.url}}">
-                    JSON file
+                  <a
+                    target="_blank"
+                    href="{% url 'playbook_generator:config_json_file_view' service_type=service_type uuid=config.uuid %}"
+                  >
+                    View JSON file
+                  </a>
+                  /
+                  <a
+                    target="_blank"
+                    download
+                    href="{% url 'playbook_generator:config_json_file_view' service_type=service_type uuid=config.uuid %}"
+                  >
+                    Download JSON file
                   </a>
                 </td>
                 <td>

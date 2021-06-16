@@ -25,6 +25,25 @@
               <span class="color__error">{{ error }}</span>
             {% endfor %}
           </div>
+          <fieldset class="uk-fieldset">
+          <legend class="uk-legend">Static Vars</legend>
+          {% for var in static_vars %}
+            <div class="uk-margin">
+              <label class="uk-form-label" for="{{var.key}}">
+              {{ var.key }}
+              </label>
+              <div class="uk-form-controls">
+                <input
+                  class="uk-input"
+                  id="form-stacked-text"
+                  type="text"
+                  name="{{var.key}}"
+                  value={{var.value}}
+                >
+              </div>
+            </div>
+          {% endfor %}
+          </fieldset>
         </div>
         <div class="uk-flex uk-flex-center">
           <button class="uk-margin-small uk-button uk-button-primary">

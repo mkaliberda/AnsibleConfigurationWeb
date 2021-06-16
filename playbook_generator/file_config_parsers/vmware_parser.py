@@ -1,6 +1,7 @@
 from django.conf import settings
 import os
 import xlrd
+import copy
 import itertools
 import re
 from playbook_generator.models import StaticVarsValue, PlaybookServiceTypes
@@ -269,15 +270,20 @@ class VmWareParser():
         },
     }
 
-    def __init__(self, file_contents=None, file_path=None, index_sheet=0):
-        self.parsed_data = {}
-        for key in self.PARSED_DATA.keys():
-            self.parsed_data[key] = self.PARSED_DATA[key].copy()
+    def __init__(self, file_contents=None, file_path=None, parsed_data=None, index_sheet=0):
+        # copy default data
+        if parsed_data:
+            self.parsed_data = parsed_data
+        else:
+            self.parsed_data = copy.deepcopy(self.PARSED_DATA)
         if file_contents:
             self.__wbook = xlrd.open_workbook(file_contents=file_contents)
-        else:
+        elif file_path:
             self.__wbook = xlrd.open_workbook(filename=file_path)
-        self.sheet = self.__wbook.sheet_by_index(index_sheet)
+
+        if file_contents or file_path:
+            self.sheet = self.__wbook.sheet_by_index(index_sheet)
+
         st = StaticVarsValue.objects.filter(service_type=PlaybookServiceTypes.VMWARE.value)
         for conf in st:
             self.parsed_data.update({

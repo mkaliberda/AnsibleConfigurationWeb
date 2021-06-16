@@ -1,10 +1,12 @@
+from typing import Tuple
+from django.http.response import HttpResponse
 import yaml
 import json
 
 from django.forms import formset_factory, modelformset_factory
 from django.conf import settings
 from django.utils import timezone
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.core.files.base import ContentFile
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -15,7 +17,6 @@ from playbook_generator.forms import FileUploadVarsPlaybookForm, PlaybookModeFor
 from playbook_generator.models import PlaybookServiceTypes, StaticVarsValue, ConfigUpload
 from sites.models import Site
 from utils import YamlLoader
-
 
 class PlaybookHomeView(generic.RedirectView):
     pattern_name = 'playbook_generator:playbook_step_upload'
@@ -149,23 +150,32 @@ class PlaybookInstructionStepViewForm(generic.TemplateView):
 
 
 class PlaybookStaticVarsForm(generic.FormView):
+    LOCATION_TYPE = "location"
     template_name = 'static_vars_form.html'
     form_class = modelformset_factory(StaticVarsValue, fields=('key', 'value',), can_delete=True)
-
+    
     def get_success_url(self):
         return reverse(
             'playbook_generator:playbook_static_vars_form',
-            kwargs={'service_type': self.kwargs.get('service_type')}
+            kwargs={
+                'service_type': self.kwargs.get('service_type'),
+                'vars_type': self.vars_type,
+            }
         )
-
 
     def get_form(self, form_class=None):
         super().get_form()
+        self.is_common_location = self.kwargs.get('vars_type') == self.LOCATION_TYPE
         formset = self.get_form_class()
-        form_qs = StaticVarsValue.objects.filter(service_type=self.kwargs.get('service_type'))
+        form_qs = StaticVarsValue.objects.filter(
+            service_type=self.kwargs.get('service_type'),
+            is_common_location=self.is_common_location,
+        )
         return formset(queryset=form_qs)
 
     def post(self, request, *args, **kwargs):
+        self.is_common_location = kwargs.get('vars_type') == self.LOCATION_TYPE
+        self.vars_type = kwargs.get('vars_type')
         formset = self.get_form_class()
         forms = formset(request.POST)
         for form in forms:
@@ -179,11 +189,13 @@ class PlaybookStaticVarsForm(generic.FormView):
                     elif form.cleaned_data.get('id'):
                         StaticVarsValue.objects.update_or_create(
                             id=form.cleaned_data.get('id').id,
+                            is_common_location=self.is_common_location,
                             defaults={'value': form.cleaned_data.get('value'), 'key': form.cleaned_data.get('key')}
                         )
                     else:
                         StaticVarsValue.objects.update_or_create(
                             key=form.cleaned_data.get('key'),
+                            is_common_location=self.is_common_location,
                             service_type=self.kwargs.get('service_type'),
                             defaults={ 'value': form.cleaned_data.get('value') }
                         )
@@ -278,6 +290,7 @@ class ConfigDeleteView(generic.DeleteView):
             self.object.delete()
         return HttpResponseRedirect(self.get_success_url())
 
+
 class ListConfigsView(generic.ListView):
     model = ConfigUpload
     queryset = ConfigUpload.objects.all()
@@ -294,3 +307,90 @@ class ListConfigsView(generic.ListView):
     def get_context_data(self, **kwargs):
         kwargs.update({ 'service_type': self.service_type })
         return super().get_context_data(**kwargs)
+
+
+class ListConfigsView(generic.ListView):
+    model = ConfigUpload
+    queryset = ConfigUpload.objects.all()
+    template_name = 'config_table.html'
+    context_object_name = 'configs'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.service_type = kwargs.get("service_type")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return super().get_queryset().filter(service_type=self.service_type)
+
+    def get_context_data(self, **kwargs):
+        kwargs.update({ 'service_type': self.service_type })
+        return super().get_context_data(**kwargs)
+
+
+class ListConfigsView(generic.ListView):
+    model = ConfigUpload
+    queryset = ConfigUpload.objects.all()
+    template_name = 'config_table.html'
+    context_object_name = 'configs'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.service_type = kwargs.get("service_type")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return super().get_queryset().filter(service_type=self.service_type)
+
+    def get_context_data(self, **kwargs):
+        kwargs.update({ 'service_type': self.service_type })
+        return super().get_context_data(**kwargs)
+
+class CongigFileView(generic.View):
+    JSON_FILE_TYPE = "JSON_FILE_TYPE"
+    YAML_FILE_TYPE = "YAML_FILE_TYPE"
+    file_type = JSON_FILE_TYPE
+
+    def dispatch(self, request, *args, **kwargs):
+        self.uploaded_config = get_object_or_404(ConfigUpload, uuid=kwargs.get("uuid"))
+        self.service_type = kwargs.get("service_type")
+        return super().dispatch(request, *args, **kwargs)
+
+    # def get_queryset(self):
+    #     return super().get_queryset().filter(service_type=self.service_type)
+
+    def get_context_data(self, **kwargs):
+        kwargs.update({ 'service_type': self.service_type })
+        return super().get_context_data(**kwargs)
+
+    def get_yaml(self):
+        parser_class = ParserFactory(event_type=self.service_type).parser_class(
+            parsed_data=self.uploaded_config.parsed_data,
+        )
+        json_name = self.uploaded_config.config_json_file.name.split('/')[-1]
+        yaml_loader = YamlLoader()
+        parsed_yaml = parser_class.get_yml_dict(json_path=f"/tmp/{json_name}")
+        file_name = f"upload_{int(timezone.now().timestamp())}.yaml"
+        yaml_file = ContentFile(
+            content=yaml_loader.yaml_dump(parsed_yaml),
+        )
+        
+        self.uploaded_config.config_yml_file.save(file_name, yaml_file)
+        response = HttpResponse(yaml_file, content_type='text/x-yaml')
+        response["Content-Disposition"] = f"filename={file_name}"
+        return response
+
+
+    def get_json(self):
+        parser_class = ParserFactory(event_type=self.service_type).parser_class(
+            parsed_data=self.uploaded_config.parsed_data,
+        )
+        self.uploaded_config.config_json_file.save(
+            f"upload_{int(timezone.now().timestamp())}.json",
+            ContentFile(json.dumps(parser_class.get_json_dict(), indent=2))
+        )
+        return JsonResponse(parser_class.get_json_dict(), json_dumps_params={'indent': 2}, safe=False)
+
+    def get(self, request, *args, **kwargs):
+        if self.file_type == self.JSON_FILE_TYPE:
+            return self.get_json()
+        if self.file_type == self.YAML_FILE_TYPE:
+            return self.get_yaml()

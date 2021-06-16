@@ -3,6 +3,7 @@ import os
 import xlrd
 import itertools
 import re
+import copy
 from playbook_generator.models import StaticVarsValue, PlaybookServiceTypes
 
 GROUPED_HEADING = {
@@ -26,6 +27,8 @@ class NutanixParser:
     STATIC = 'static'
     VM = 'vm'
     DEFAULT = 'default'
+
+    __wbook=None
 
     GROUPED_HEADING = {
         'Cluster Configuration': CLUSTER_CONFIGURATION,
@@ -728,7 +731,7 @@ class NutanixParser:
         },
         'hypervisor_block_array': {
             'is_to_playbook': True,
-            'value': [],
+            'value': "",
         },
     }
     """
@@ -748,16 +751,20 @@ class NutanixParser:
         node2_is_bare_metal - default to true and don't pull anything from excel
     """
 
-    def __init__(self, file_contents=None, file_path=None, index_sheet=0):
+
+    def __init__(self, file_contents=None, file_path=None, parsed_data=None, index_sheet=0):
         # copy default data
-        self.parsed_data = { }
-        for key, val in self.PARSED_DATA.items():
-            self.parsed_data[key] = { **val }
+        if parsed_data:
+            self.parsed_data = parsed_data
+        else:
+            self.parsed_data = copy.deepcopy(self.PARSED_DATA)
         if file_contents:
             self.__wbook = xlrd.open_workbook(file_contents=file_contents)
         elif file_path:
             self.__wbook = xlrd.open_workbook(filename=file_path)
-        self.sheet = self.__wbook.sheet_by_index(index_sheet)
+
+        if file_contents or file_path:
+            self.sheet = self.__wbook.sheet_by_index(index_sheet)
         # add static vars
         st = StaticVarsValue.objects.filter(service_type=PlaybookServiceTypes.NUTANIX.value)
         for conf in st:
@@ -839,7 +846,6 @@ class NutanixParser:
         }
 
         NODE_VALUES = {}
-
         NODE_KEY = 'ipmi_ip'
         headers = self.get_headers(row_num, to_group)
         row_num += 1
@@ -856,6 +862,8 @@ class NutanixParser:
                     if self.parsed_data.get(headers[inx]):
                         "set values to base dict"
                         self.set_value_to_parsed_data(col_num=inx, row_num=row_num, item_key=headers[inx])
+            if not self.parsed_data['hypervisor_block_array']['value']:
+                self.parsed_data['hypervisor_block_array']['value'] = []
             self.parsed_data['hypervisor_block_array']['value'].append(node_dict.get('block_id'))
             if node_dict:
                 self.parsed_data['total_cluster_nodes']['value'] += 1

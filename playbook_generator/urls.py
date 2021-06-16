@@ -16,7 +16,8 @@ Including another URLconf
 from django.urls import path, include
 from playbook_generator.views import (PlaybookHomeView, PlaybookSelectTagViewForm, PlaybookUploadStepViewForm,
                                       PlaybookReviewStepViewForm, PlaybookInstructionStepViewForm, PlaybookStaticVarsForm,
-                                      ListConfigsView, ConfigsDetailsView, ConfigDeleteView, ConfigEditView)
+                                      ListConfigsView, ConfigsDetailsView, ConfigDeleteView, ConfigEditView,
+                                      CongigFileView)
 
 
 urlpatterns = [
@@ -29,7 +30,7 @@ urlpatterns = [
         PlaybookReviewStepViewForm.as_view(), name='playbook_step_review'),
     path('playbook-form/<str:service_type>/step/instruction/<uuid:config_uuid>/',
         PlaybookInstructionStepViewForm.as_view(), name='playbook_step_instruction'),
-    path('playbook-static-vars-form/<str:service_type>/',
+    path('playbook-static-vars-form/<str:service_type>/<str:vars_type>/',
         PlaybookStaticVarsForm.as_view(), name='playbook_static_vars_form'),
     path('configs/<str:service_type>/',
         ListConfigsView.as_view(), name='config_list_view'),
@@ -39,4 +40,8 @@ urlpatterns = [
         ConfigDeleteView.as_view(), name='config_delete_confirm_view',),
     path('config-edit/<str:service_type>/<uuid:uuid>/',
         ConfigEditView.as_view(), name='config_edit_view',),
+    path('config-file-json/<str:service_type>/<uuid:uuid>/',
+        CongigFileView.as_view(file_type=CongigFileView.JSON_FILE_TYPE), name='config_json_file_view',),
+    path('config-file-yaml/<str:service_type>/<uuid:uuid>/',
+        CongigFileView.as_view(file_type=CongigFileView.YAML_FILE_TYPE), name='config_yaml_file_view',),
 ]
