@@ -31,23 +31,24 @@
                 Parse Build Sheet
               </a>
             </li>
-            {% comment %} <li class="uk-parent setings-nav">
+            <li class="uk-parent setings-nav {% if 'playbook-static-vars-form' in request.path %} uk-open {% endif %}">
               <a href="#">Settings</a>
               <ul class="uk-nav-sub">
                   <li>
-                    <a href="#">Sub item</a>
+                    <a
+                      href="{% url 'playbook_generator:playbook_static_vars_form' service_type='nutanix' vars_type='location' %}"
+                    >
+                      Location Specific
+                    </a>
                   </li>
                   <li>
-                    <a href="#">Sub item</a>
+                    <a
+                      href="{% url 'playbook_generator:playbook_static_vars_form' service_type='nutanix' vars_type='static' %}"
+                    >
+                      Static Vars
+                    </a>
                   </li>
               </ul>
-            </li> {% endcomment %}
-            <li>
-              <a href="{% url 'playbook_generator:playbook_static_vars_form' service_type='nutanix' %}"
-                 class="{% if 'playbook-static-vars-form' in request.path  %}uk-active{% endif %}"
-              >
-                Configure static vars
-              </a>
             </li>
             <li>
               <a href="{% url 'playbook_generator:config_list_view' service_type='nutanix' %}"
@@ -69,7 +70,7 @@
           <a href="#" class="img__link">
             <img src="{% static 'img/service_logo_vmware.png' %}"> VMWARE
           </a>
-          <ul class="uk-nav-sub">
+          <ul class="uk-nav-sub uk-nav-parent-icon" uk-nav="multiple: true">
             <li>
               <a href="{% url 'playbook_generator:playbook_step_upload' service_type='vmware' %}"
                  class="{% if 'playbook-form' in request.path  %}uk-active{% endif %}"
@@ -77,13 +78,32 @@
                 Parse Build Sheet
               </a>
             </li>
-            <li>
+            <li class="uk-parent setings-nav {% if 'playbook-static-vars-form' in request.path %} uk-open {% endif %}">
+              <a href="#">Settings</a>
+              <ul class="uk-nav-sub">
+                  <li>
+                    <a
+                      href="{% url 'playbook_generator:playbook_static_vars_form' service_type='vmware' vars_type='location' %}"
+                    >
+                      Location Specific
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="{% url 'playbook_generator:playbook_static_vars_form' service_type='vmware' vars_type='static' %}"
+                    >
+                      Static Vars
+                    </a>
+                  </li>
+              </ul>
+            </li>
+            {% comment %} <li>
               <a href="{% url 'playbook_generator:playbook_static_vars_form' service_type='vmware' %}"
                  class="{% if 'playbook-static-vars-form' in request.path  %}uk-active{% endif %}"
               >
                 Configure static vars
               </a>
-            </li>
+            </li> {% endcomment %}
             <li>
               <a href="{% url 'playbook_generator:config_list_view' service_type='vmware' %}"
                  class="{% if 'list/configs' in request.path  %}uk-active{% endif %}"

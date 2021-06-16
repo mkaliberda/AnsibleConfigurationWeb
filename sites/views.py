@@ -4,6 +4,7 @@ from django.views import generic
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
+from playbook_generator.models import StaticVarsValue, StaticSiteVars
 from .models import Site
 from .form import CreateEditSitesForm
 from  sites.models import Site
@@ -19,9 +20,11 @@ class SitesCreateEditForm(generic.FormView):
 
     def dispatch(self, request, *args, **kwargs):
         self.service_type = kwargs.get("service_type")
+        self.static_vars = StaticVarsValue.objects.filter(service_type=self.service_type, is_common_location=True)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        kwargs.update({ 'static_vars': self.static_vars })
         kwargs.update({ 'service_type': self.service_type })
         return super().get_context_data(**kwargs)
 
@@ -38,10 +41,17 @@ class SitesCreateEditForm(generic.FormView):
             service_type = form.cleaned_data.pop('service_type', None)
             name = form.cleaned_data.pop('name', None)
             kwargs.update({'service_type': self.service_type})
-            Site.objects.update_or_create(
+            site, is_created = Site.objects.update_or_create(
                 service_type=service_type,
                 name=name,
             )
+            for var in self.static_vars:
+                StaticSiteVars.objects.update_or_create(
+                    site=site,
+                    key=var.key,
+                    defaults={ 'value': request.POST.get(var.key) }
+                )
+
             return redirect(to=self.get_success_url())
         else:
             return super().form_valid(form)
